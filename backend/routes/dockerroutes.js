@@ -23,7 +23,7 @@ router.get("/listcontainers", async (req, res) => {
 });
 
 router.get("/createimage",async(req,res)=>{
-    img = dockerapi.createimage(docker,"ubuntu:latest")
+    dockerapi.createimage(docker,"ubuntu:latest")
 });
 
  
@@ -32,6 +32,41 @@ const promisifyStream = stream => new Promise((resolve, reject) => {
     stream.on('end', resolve)
     stream.on('error', reject)
 });
+
+
+router.get("/createcontainer",async(req,res)=>{
+    const config = {
+        Image: 'ubuntu:latest',
+        Cmd: ['/bin/bash'],
+        name: 'my-container'
+    };
+    docker.createContainer(config, (err, container) => {
+        if (err) {
+          console.log('Error creating container:', err);
+        } else {
+          console.log('Container created:', container.id);
+      
+          // Stream data to the container
+          const logStream = docker.getContainer(container.id).attach({
+            stream: true,
+            stdout: true,
+            stderr: true
+          }, (err, stream) => {
+            if (err) {
+              console.log('Error streaming data to container:', err);
+            } else {
+              console.log('Streaming data to container:', container.id);
+            }
+          });
+      
+          // Listen for data events on the stream
+          logStream.on('data', (data) => {
+            // Send data to the frontend using Socket.io
+            io.emit('data', data.toString());
+          });
+        }
+    });
+})
 
 router.get('*', (req, res) => {
     res.sendStatus(404);
