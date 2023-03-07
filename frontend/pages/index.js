@@ -1,10 +1,15 @@
 import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "@next/font/google";
+import axios from "axios";
+import { Poppins } from "@next/font/google";
+import Layout from "@/Sections/Layout";
 
-const inter = Inter({ subsets: ["latin"] });
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  style: ["normal"],
+});
 
-export default function Home() {
+const Home = () => {
   return (
     <>
       <Head>
@@ -13,7 +18,21 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="text-red-500">Hello world</main>
+      <main className={`text-red-500 ${poppins.className}`}>
+        <Layout>DashBoard</Layout>
+      </main>
     </>
   );
-}
+};
+
+// export const getServerSideProps = async (ctx) => {
+//   const { data } = await axios.get("http://localhost:3000/api/createcontainer");
+
+//   console.log(data);
+
+//   return {
+//     props: { data: data },
+//   };
+// };
+
+export default Home;
