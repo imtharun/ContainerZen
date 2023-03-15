@@ -4,7 +4,8 @@ import {
   HiOutlineSquaresPlus as ApplicationIcon,
 } from "react-icons/hi2";
 import { RiUserSettingsLine as UserSettingIcon } from "react-icons/ri";
-import { BsStack as ResourcesIcon } from "react-icons/bs";
+import { BsFillDatabaseFill as VolumesIcon } from "react-icons/bs";
+import { BiDisc as ImagesIcon } from "react-icons/bi";
 
 const SideBar = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -19,8 +20,12 @@ const SideBar = () => {
       name: "Applications",
     },
     {
-      icon: <ResourcesIcon className="w-[1.4rem] h-6" />,
-      name: "Resources",
+      icon: <ImagesIcon className="w-[1.4rem] h-6" />,
+      name: "Images",
+    },
+    {
+      icon: <VolumesIcon className="w-[1.4rem] h-6" />,
+      name: "Volume",
     },
     {
       icon: <UserSettingIcon className="w-[1.4rem] h-6" />,
@@ -30,10 +35,8 @@ const SideBar = () => {
 
   return (
     <>
-      <div className="sm:hidden absolute bottom-0 bg-dark w-full p-3 ">
-        <div
-          className={`flex justify-center overflow-x-scroll no-scrollbar  text-light `}
-        >
+      <aside className="block sm:hidden absolute bottom-0 bg-mid-dark text-light w-full p-3">
+        <div className={`flex justify-center overflow-x-scroll no-scrollbar  `}>
           {contents.map((ele, index) => {
             return (
               <MiniContainerForSmallScreen
@@ -44,17 +47,15 @@ const SideBar = () => {
             );
           })}
         </div>
-      </div>
-      <div
+      </aside>
+      <aside
         onMouseEnter={() => {
           setIsVisible(true);
-          console.log("entered", isVisible);
         }}
         onMouseLeave={() => {
           setIsVisible(false);
-          console.log("exited");
         }}
-        className={`hidden sm:block absolute bg-light text-dark h-[90vh] p-3 transition-all duration-300 ease-out ${
+        className={`hidden sm:block absolute bg-mid-dark text-light  h-[90vh] p-3 transition-all duration-300 ease-out ${
           !isVisible ? "w-[66px]" : "w-[236px]"
         }`}
       >
@@ -69,7 +70,7 @@ const SideBar = () => {
             />
           );
         })}
-      </div>
+      </aside>
     </>
   );
 };
@@ -86,7 +87,7 @@ export const MiniContainerForSmallScreen = ({ icon, name }) => {
 export const MiniContainerForLargerScreen = ({ icon, name, isVisible }) => {
   return (
     <div className="border-b border-b-gray-400 ">
-      <div className="hover:bg-slate-200 rounded-md my-1 p-2 mx-auto">
+      <div className="hover:bg-slate-600 rounded-md my-1 p-2 mx-auto">
         <div
           className={`flex items-center ${
             !isVisible ? "w-5rem" : "w-[13rem]"

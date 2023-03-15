@@ -1,13 +1,6 @@
 import Head from "next/head";
 import axios from "axios";
-import { Poppins } from "@next/font/google";
-import Layout from "@/Sections/Layout";
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  style: ["normal"],
-});
+import Dashboard from "@/components/Dashboard";
 
 const Home = () => {
   return (
@@ -18,8 +11,8 @@ const Home = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={`text-red-500 ${poppins.className}`}>
-        <Layout>DashBoard</Layout>
+      <main>
+        <Dashboard />
       </main>
     </>
   );
