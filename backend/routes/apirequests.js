@@ -7,14 +7,13 @@ router.use(express.json());
 const io = require('socket.io');
 const dockerapi = require("./docker/dockerapi")
 
-const Docker = require('dockerode');
-const docker = new Docker();
+// const Docker = require('dockerode');
+// const docker = new Docker();
 
-
-
+//to list all containers in docker
 router.get("/listcontainers", async (req, res) => {
     try {
-      const containers = await docker.listContainers();
+      const containers = await dockerapi.listcontainers();
       res.json(containers);
     } catch (err) {
       console.error(err);
@@ -22,11 +21,24 @@ router.get("/listcontainers", async (req, res) => {
     }
 });
 
+
+//to pull an image from dockerhub
 router.get("/createimage",async(req,res)=>{
     dockerapi.createimage(docker,"ubuntu:latest")
+    res.send("image created")
 });
 
+//to start a docker container using container name
+router.get("/startcontainer",async(req,res)=>{
+    // const containerid = req.body.containerid;
+    const containerid = "my-container"
+    const container = await dockerapi.startcontainer(containerid);
+    res.json(container);
+});
+
+
  
+
 const promisifyStream = stream => new Promise((resolve, reject) => {
     stream.on('data', data => console.log(data.toString()))
     stream.on('end', resolve)
@@ -34,39 +46,22 @@ const promisifyStream = stream => new Promise((resolve, reject) => {
 });
 
 
+//to create a new docker container
 router.get("/createcontainer",async(req,res)=>{
     const config = {
         Image: 'ubuntu:latest',
         Cmd: ['/bin/bash'],
         name: 'my-container'
     };
-    docker.createContainer(config, (err, container) => {
-        if (err) {
-          console.log('Error creating container:', err);
-        } else {
-          console.log('Container created:', container.id);
-      
-          // Stream data to the container
-          const logStream = docker.getContainer(container.id).attach({
-            stream: true,
-            stdout: true,
-            stderr: true
-          }, (err, stream) => {
-            if (err) {
-              console.log('Error streaming data to container:', err);
-            } else {
-              console.log('Streaming data to container:', container.id);
-            }
-          });
-      
-          // Listen for data events on the stream
-          logStream.on('data', (data) => {
-            // Send data to the frontend using Socket.io
-            io.emit('data', data.toString());
-          });
-        }
-    });
+    const container = await dockerapi.createContainer(config.Image, config.name,3030);
+    res.status(200).json(container);
 })
+
+router.get("/stopcontainer",async(req,res)=>{
+    const containerid = "my-container"
+    const container = await dockerapi.stopcontainer(containerid);
+    res.json(container);
+});
 
 router.get('*', (req, res) => {
     res.sendStatus(404);
