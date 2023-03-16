@@ -2,7 +2,7 @@ const Docker = require('dockerode');
 const docker = new Docker();
 
 
-
+// ---------------------------------------Images--------------------------------------------
 const createimage = (image)=>{
     console.log(image)
     docker.createImage({fromImage: image}, function (err, stream) {
@@ -10,6 +10,8 @@ const createimage = (image)=>{
     });
 }
 
+
+// ---------------------------------------Containers--------------------------------------------
 async function startcontainer(containerid){
     const container = await docker.getContainer(containerid);
     await container.start();
@@ -26,7 +28,6 @@ async function listcontainers(){
     const containers = await docker.listContainers();
     return containers
 }
-
 
 async function createContainer(imageName, containerName, port) {
     // Check if the image exists locally
@@ -65,7 +66,33 @@ async function createContainer(imageName, containerName, port) {
   
     await container.start();
     console.log(`Container '${containerName}' created and started`);
-  }
+}
+
+async function restartcontainer(containerid){
+    const container = await docker.getContainer(containerid);
+    await container.restart();
+    return container;
+}
+
+async function removeContainer(containerId) {
+    const container = docker.getContainer(containerId);
+    await container.remove();
+}
+
+
+// ---------------------------------------Volumes--------------------------------------------
+
+async function createVolume(volumeName) {
+    const volume = await docker.createVolume({
+    Name: volumeName
+    });
+    console.log(`Created volume ${volumeName}`);
+    return volume;
+}
+
+async function deleteVolume(volumeName) {
+    await docker.getVolume(volumeName).remove();
+}
 
 
 module.exports = {
@@ -74,4 +101,8 @@ module.exports = {
     listcontainers,
     startcontainer,
     stopcontainer,
+    restartcontainer,
+    removeContainer,
+    createVolume,
+    deleteVolume,
 }

@@ -17,10 +17,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 const allowedOrigins = ['http://localhost:3000', 
-'http://localhost:3000/patient/dashboard', 
-'http://localhost:3000/login',
-'http://localhost:3000/signup',
-'http://localhost:3000/doctor/dashboard',
+'http://localhost:3000/api', 
 ];
 
 app.use((req,res,next)=>{
