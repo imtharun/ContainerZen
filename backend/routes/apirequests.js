@@ -163,7 +163,7 @@ router.get('/stats', (req, res) => {
     });
     req.on('close', () => {
       console.log(`Stopping streaming of ${containers.length} containers`);
-      containers.forEach(container => container.stop());
+    //   containers.forEach(container => container.stop());
     });
 });
   
