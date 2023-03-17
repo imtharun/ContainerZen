@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import Link from "next/link";
 import {
   AiOutlinePlusCircle as PlusIcon,
   AiOutlineSearch as SearchIcon,
@@ -15,7 +16,9 @@ const Table = () => {
         <div className="flex items-center">
           <h1 className="font-medium text-base text-center">Applications </h1>
           <button className="ml-2">
-            <PlusIcon className="w-5 h-5" />
+            <Link href="/applications/deploy">
+              <PlusIcon className="w-5 h-5" />
+            </Link>
           </button>
           <button className="ml-2">
             <RefreshIcon className="w-5 h-5" />

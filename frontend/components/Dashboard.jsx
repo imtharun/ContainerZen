@@ -1,7 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Card from "./Card";
 
 const Dashboard = () => {
+  const [streamingData, setStreamingData] = useState("");
+
+  useEffect(() => {
+    console.log(streamingData);
+  }, [streamingData]);
+
+  useEffect(() => {
+    const eventSource = new EventSource("http://localhost:5000/api/stats");
+
+    eventSource.onmessage = (event) => {
+      setStreamingData(event.data);
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, []);
+
   return (
     <div className="flex flex-col bg-dark text-light p-2 sm:ml-[3rem] sm:px-[5rem] pt-4 pb-4 h-[90vh]">
       <h1 className="bg-light text-dark p-2 rounded-t-md font-medium text-lg">
