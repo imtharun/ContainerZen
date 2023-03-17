@@ -171,18 +171,6 @@ router.get('/stats', (req, res) => {
     //   containers.forEach(container => container.stop());
     });
 });
-  
-router.get("/createvolume",async(req,res)=>{
-    const volumeName = "my-volume"
-    try{
-        const volume = await dockerapi.createVolume(volumeName);
-        res.json(volume);
-    }
-    catch(error){
-        res.send("Unable to create volume");
-
-    }
-})
 
 router.get("/deletevolume",async(req,res)=>{
     const volumeName = "my-volume"

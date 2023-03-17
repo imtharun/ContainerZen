@@ -80,6 +80,36 @@ async function removeContainer(containerId) {
 }
 
 
+// function to get stats for a container
+async function getContainerStats(containerId) {
+  try {
+    const container = dockerClient.getContainer(containerId);
+    const stats = await container.stats({ stream: false });
+
+    // parse the stats and return the relevant information
+    const cpuUsage = stats.cpu_stats.cpu_usage.total_usage;
+    const systemCpuUsage = stats.cpu_stats.system_cpu_usage;
+    const cpuPercent = ((cpuUsage / systemCpuUsage) * 100).toFixed(2);
+    const memoryUsage = stats.memory_stats.usage;
+    const memoryLimit = stats.memory_stats.limit;
+    const memoryPercent = ((memoryUsage / memoryLimit) * 100).toFixed(2);
+    const timestamp = moment(stats.read).format('YYYY-MM-DD HH:mm:ss');
+
+    return {
+      containerId,
+      cpuPercent,
+      memoryUsage,
+      memoryLimit,
+      memoryPercent,
+      timestamp,
+    };
+  } catch (err) {
+    console.error(`Error getting stats for container ${containerId}: ${err}`);
+    return null;
+  }
+}
+
+
 // ---------------------------------------Volumes--------------------------------------------
 
 async function createVolume(volumeName) {
@@ -105,4 +135,5 @@ module.exports = {
     removeContainer,
     createVolume,
     deleteVolume,
+    getContainerStats,
 }
