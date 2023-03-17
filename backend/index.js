@@ -2,7 +2,7 @@ const cors = require("cors");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const apidocker = require("./routes/dockerroutes");
+const apidocker = require("./routes/apirequests");
 
 const port = 3000;
 const app = express();
@@ -17,10 +17,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 const allowedOrigins = ['http://localhost:3000', 
-'http://localhost:3000/patient/dashboard', 
-'http://localhost:3000/login',
-'http://localhost:3000/signup',
-'http://localhost:3000/doctor/dashboard',
+'http://localhost:3000/api', 
 ];
 
 app.use((req,res,next)=>{
