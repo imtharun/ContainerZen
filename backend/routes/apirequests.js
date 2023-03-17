@@ -129,6 +129,11 @@ router.get("/removecontainer",async(req,res)=>{
 // Stream the real-time stats of all running containers
 router.get('/stats', (req, res) => {
     const containers = [];
+    res.writeHead({
+        'content-type': 'text/event-stream',
+        'cache-control': 'no-cache',
+        'connection': 'keep-alive'
+    })
     docker.listContainers((err, containerList) => {
       if (err) {
         console.error(`Failed to list containers: ${err.message}`);
