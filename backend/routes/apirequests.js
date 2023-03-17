@@ -126,43 +126,47 @@ router.get("/removecontainer",async(req,res)=>{
 });
 
 
+// Stream the real-time stats of all running containers
 router.get('/stats', (req, res) => {
-    // Get the container
-    // const container = docker.getContainer(req.params.id);
-    const containerid = "2860a7d21106c74fd38bf193e39505105aa241ed2938020b3ef388c45a236b4c";
-    const container  = docker.getContainer(containerid);
-  
-    // Get container stats and stream them to the frontend over a WebSocket connection
-    container.stats({ stream: true }, (err, stream) => {
+    const containers = [];
+    docker.listContainers((err, containerList) => {
       if (err) {
-        console.error(err);
-        return res.status(500).send(err.message);
+        console.error(`Failed to list containers: ${err.message}`);
+        res.status(500).send(`Failed to list containers: ${err.message}`);
+        return;
       }
-  
-      stream.on('data', (chunk) => {
-        const stats = JSON.parse(chunk.toString());
-        wss.clients.forEach((client) => {
-          if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify(stats));
+      console.log(`Found ${containerList.length} running containers`);
+      containerList.forEach(containerInfo => {
+        const container = docker.getContainer(containerInfo.Id);
+        containers.push(container);
+        container.stats({ stream: true }, (err, stream) => {
+          if (err) {
+            console.error(`Failed to stream container stats: ${err.message}`);
+            return;
           }
+          console.log(`Streaming stats for container ${container.id}`);
+          stream.on('data', chunk => {
+            const data = JSON.parse(chunk.toString('utf8'));
+            const usageData = {
+              id: container.id,
+              name: containerInfo.Names[0].substring(1),
+              cpuUsage: data.cpu_stats.cpu_usage.total_usage,
+              memoryUsage: data.memory_stats.usage
+            };
+            res.write(`data: ${JSON.stringify(usageData)}\n\n`);
+          });
+          stream.on('error', err => {
+            console.error(`Error on container stats stream: ${err.message}`);
+          });
         });
       });
-  
-      stream.on('error', (err) => {
-        console.error(err);
-      });
-  
-      // Return a success response to the client
-      res.status(200).send('Started streaming container stats');
     });
-  });
+    req.on('close', () => {
+      console.log(`Stopping streaming of ${containers.length} containers`);
+      containers.forEach(container => container.stop());
+    });
+});
   
-
-
-
-
-
-
 router.get("/createvolume",async(req,res)=>{
     const volumeName = "my-volume"
     try{
