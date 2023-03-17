@@ -16,7 +16,7 @@ container.stats({ stream: true }, (err, stream) => {
   stream.on('data', chunk => {
     const data = JSON.parse(chunk.toString('utf8'));
     console.log(`CPU usage: ${data.cpu_stats.cpu_usage.total_usage}`);
-    console.log(`Memory usage: ${data.memory_stats.usage/1024*1024}`);
+    console.log(`Memory usage: ${data.memory_stats.usage/1024}`);
     // Update the frontend with the new data here
   });
 

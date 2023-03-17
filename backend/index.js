@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const apidocker = require("./routes/apirequests");
 
-const port = 3000;
+const port = 5000;
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: false }));
