@@ -1,7 +1,6 @@
 import React from "react";
 import Header from "@/components/Header.jsx";
 import SideBar from "@/components/SideBar";
-
 import { Poppins } from "@next/font/google";
 
 const poppins = Poppins({

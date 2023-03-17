@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Link from "next/link";
 import {
   HiOutlineSquares2X2 as DashboardIcon,
   HiOutlineSquaresPlus as ApplicationIcon,
@@ -39,11 +40,13 @@ const SideBar = () => {
         <div className={`flex justify-center overflow-x-scroll no-scrollbar  `}>
           {contents.map((ele, index) => {
             return (
-              <MiniContainerForSmallScreen
-                key={index + 1}
-                icon={ele.icon}
-                name={ele.name}
-              />
+              <Link key={index + 1} href={`/${ele.name.toLowerCase()}`}>
+                <MiniContainerForSmallScreen
+                  key={index + 1}
+                  icon={ele.icon}
+                  name={ele.name}
+                />
+              </Link>
             );
           })}
         </div>
@@ -61,13 +64,22 @@ const SideBar = () => {
       >
         {contents.map((ele, index) => {
           return (
-            <MiniContainerForLargerScreen
+            <Link
               key={index + 1}
-              icon={ele.icon}
-              name={ele.name}
-              isVisible={isVisible}
-              setIsVisible={setIsVisible}
-            />
+              href={`/${
+                ele.name.toLowerCase() == "dashboard"
+                  ? ""
+                  : ele.name.toLowerCase()
+              }`}
+            >
+              <MiniContainerForLargerScreen
+                key={index + 1}
+                icon={ele.icon}
+                name={ele.name}
+                isVisible={isVisible}
+                setIsVisible={setIsVisible}
+              />
+            </Link>
           );
         })}
       </aside>

@@ -1,5 +1,6 @@
 import Head from "next/head";
 import axios from "axios";
+import Table from "@/components/Table";
 import { Poppins } from "@next/font/google";
 
 const poppins = Poppins({
@@ -17,8 +18,8 @@ const Application = () => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={`text-red-500 ${poppins.className} ml-24`}>
-        Applications
+      <main>
+        <Table />
       </main>
     </>
   );
