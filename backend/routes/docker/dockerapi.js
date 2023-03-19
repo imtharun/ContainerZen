@@ -16,6 +16,11 @@ async function deleteimage(image){
     return delimage;
 }
 
+async function listimages(){
+    const images = await docker.listImages();
+    return images;
+}
+
 
 // ---------------------------------------Containers--------------------------------------------
 async function startcontainer(containerid){
@@ -31,7 +36,7 @@ async function stopcontainer(containerid){
 }
 
 async function listcontainers(){
-    const containers = await docker.listContainers();
+    const containers = await docker.listContainers({ all: true });
     return containers
 }
 
@@ -174,6 +179,11 @@ async function deleteVolume(volumeName) {
     await docker.getVolume(volumeName).remove();
 }
 
+async function listvolumes(){
+    const volumes = await docker.listVolumes();
+    return volumes;
+}
+
 
 // ---------------------------------------Networks--------------------------------------------
 
@@ -194,6 +204,11 @@ async function createNetwork(networkName, driver) {
     console.log(`Created network ${networkName}`);
     return network;
   }
+}
+
+async function listnetworks(){
+    const networks = await docker.listNetworks();
+    return networks;
 }
 
 
@@ -225,4 +240,7 @@ module.exports = {
     createNetwork,
     deleteimage,
     deleteNetwork,
+    listvolumes,
+    listnetworks,
+    listimages,
 }
