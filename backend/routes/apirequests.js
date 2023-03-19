@@ -77,20 +77,22 @@ router.get("/startcontainer",async(req,res)=>{
 
 //to create a new docker container
 router.get("/createcontainer",async(req,res)=>{
+    const containername = req.body.containername;
+    const containerimage = req.body.image;
+    const containernetwork = req.body.network;
+    const hostvolume = req.body.hostvolume;
+    const containervolume = req.body.containervolume;
+    const hostport = req.body.hostport;
+    const containerport = req.body.containerport;
+    const restartpolicy = req.body.restartpolicy;
 
-    //name
-    //image
-    //restartpolicy
-    //network
-    //networkmode
-    //hostvolume
-    //containervolume
     try{
         const networ = await dockerapi.createNetwork("my-network", "bridge");
-        const container = await dockerapi.createContainer("my-container", "ubuntu:latest", "my-network", "hostvolume", "containervolume", 8080, 8080, "always");
+        const container = await dockerapi.createContainer("my-container", "docker/getting-started:latest", "my-network", "", "", 8080, 80, "always");
         res.status(200).json(container);
     }catch(error){
-        res.send("Unable to fetch container image");
+        console.log(error);
+        res.send(error);
     }
 })
 
@@ -122,7 +124,7 @@ router.get("/stopcontainer",async(req,res)=>{
         res.send("container not found");
         }
         else{
-            res.send("Unknown error");
+            res.send(error);
         }
     }
     
@@ -139,7 +141,7 @@ router.get("/deletecontainer",async(req,res)=>{
         res.send("container not found");
         }
         else{
-            res.send("Unknown error");
+            res.send(error);
         }
     }
     
@@ -173,8 +175,9 @@ router.get("/deletevolume",async(req,res)=>{
 //---------------------------------------Networks--------------------------------------------
 router.get("/createnetwork",async(req,res)=>{
     const networkName = "my-network"
+    const networkDriver = "bridge"
     try{
-        await dockerapi.createNetwork(networkName, "bridge");
+        await dockerapi.createNetwork(networkName, networkDriver);
         res.json("created network");
     }
     catch(error){
