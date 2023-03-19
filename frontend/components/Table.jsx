@@ -6,7 +6,7 @@ import {
 } from "react-icons/ai";
 import { TbRefresh as RefreshIcon } from "react-icons/tb";
 
-const Table = () => {
+const Table = ({ headers, rows }) => {
   const searchRef = useRef();
   const [search, setSearch] = useState("");
 
@@ -27,7 +27,7 @@ const Table = () => {
         <Search search={search} setSearch={setSearch} searchRef={searchRef} />
       </div>
       <div className="bg-mid-dark rounded-b-md p-4 overflow-y-scroll no-scrollbar">
-        <T search={search} />
+        <T headers={headers} search={search} rows={rows} />
       </div>
     </div>
   );
@@ -49,59 +49,7 @@ const Search = ({ searchRef, search, setSearch }) => {
   );
 };
 
-const T = ({ search }) => {
-  const headers = ["Name", "Project", "Status", "Image", "Ports", "Created At"];
-
-  const rows = [
-    {
-      name: "affectionate_bhaskara",
-      project: "-",
-      status: "running",
-      image: "wsong008/mab-malware",
-      ports: "8000",
-      createdAt: "March 15, 2023 9:54 PM",
-    },
-    {
-      name: "qbittorrent",
-      project: "-",
-      status: "running",
-      image: "lscr.io/linuxserver/qbittorrent",
-      ports: "9000",
-      createdAt: "March 15, 2023 9:54 PM",
-    },
-    {
-      name: "qbittorrent",
-      project: "-",
-      status: "running",
-      image: "lscr.io/linuxserver/qbittorrent",
-      ports: "9000",
-      createdAt: "March 15, 2023 9:54 PM",
-    },
-    {
-      name: "qbittorrent",
-      project: "-",
-      status: "running",
-      image: "lscr.io/linuxserver/qbittorrent",
-      ports: "9000",
-      createdAt: "March 15, 2023 9:54 PM",
-    },
-    {
-      name: "qbittorrent",
-      project: "-",
-      status: "running",
-      image: "lscr.io/linuxserver/qbittorrent",
-      ports: "9000",
-      createdAt: "March 15, 2023 9:54 PM",
-    },
-    {
-      name: "qbittorrent",
-      project: "-",
-      status: "running",
-      image: "lscr.io/linuxserver/qbittorrent",
-      ports: "9000",
-      createdAt: "March 15, 2023 9:54 PM",
-    },
-  ];
+const T = ({ search, headers, rows }) => {
   return (
     <div className="flex flex-col">
       <div className="overflow-x-auto sm:-mx-6 lg:-mx-8 no-scrollbar">
@@ -148,10 +96,11 @@ const T = ({ search }) => {
                       </tr>
                     );
                   })
-                ) : rows.filter((row) => row.name.includes(search)).length !==
-                  0 ? (
+                ) : rows.filter((row) =>
+                    row.name.toLowerCase().includes(search)
+                  ).length !== 0 ? (
                   rows
-                    .filter((row) => row.name.includes(search))
+                    .filter((row) => row.name.toLowerCase().includes(search))
                     .map((row, index) => {
                       return (
                         <tr

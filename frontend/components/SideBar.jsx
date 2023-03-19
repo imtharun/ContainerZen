@@ -26,17 +26,17 @@ const SideBar = () => {
     },
     {
       icon: <VolumesIcon className="w-[1.4rem] h-6" />,
-      name: "Volume",
+      name: "Volumes",
     },
-    {
-      icon: <UserSettingIcon className="w-[1.4rem] h-6" />,
-      name: "Settings",
-    },
+    // {
+    //   icon: <UserSettingIcon className="w-[1.4rem] h-6" />,
+    //   name: "Settings",
+    // },
   ];
 
   return (
     <>
-      <aside className="block sm:hidden absolute bottom-0 bg-mid-dark text-light w-full p-3">
+      <aside className="block sm:hidden absolute bottom-0 bg-mid-dark text-light w-full p-3 z-50">
         <div className={`flex justify-center overflow-x-scroll no-scrollbar  `}>
           {contents.map((ele, index) => {
             return (
@@ -58,7 +58,7 @@ const SideBar = () => {
         onMouseLeave={() => {
           setIsVisible(false);
         }}
-        className={`hidden sm:block absolute bg-mid-dark text-light  h-[90vh] p-3 transition-all duration-300 ease-out ${
+        className={`hidden sm:block absolute bg-mid-dark text-light  h-[90vh] p-3 transition-all duration-300 ease-out z-50 ${
           !isVisible ? "w-[66px]" : "w-[236px]"
         }`}
       >

@@ -9,10 +9,10 @@ const poppins = Poppins({
   style: ["normal"],
 });
 
-const Layout = ({ children }) => {
+const Layout = ({ children, heading }) => {
   return (
     <section className={`relative ${poppins.className}`}>
-      <Header heading="Home" user="Admin" />
+      <Header heading={heading} user="Admin" />
       <SideBar />
       {children}
     </section>
