@@ -3,9 +3,13 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const apidocker = require("./routes/apirequests");
+const usageserver = require("./routes/docker/usageserver");
+
 
 const port = 5000;
 const app = express();
+
+usageserver.startserver();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());

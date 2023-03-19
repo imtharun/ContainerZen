@@ -129,6 +129,7 @@ router.get("/removecontainer",async(req,res)=>{
 // Stream the real-time stats of all running containers
 router.get('/stats', (req, res) => {
     const containers = [];
+    const map = new Map();
     res.writeHead(200,{
         'content-type': 'text/event-stream',
     //     'cache-control': 'no-cache',
@@ -158,7 +159,15 @@ router.get('/stats', (req, res) => {
               cpuUsage: data.cpu_stats.cpu_usage.total_usage,
               memoryUsage: data.memory_stats.usage
             };
-            res.write(`data: ${JSON.stringify(usageData)}\n\n`);
+            map.set(container.id, usageData);
+            // console.log(map.values());
+            // console.log(new Array(map.values()));
+            // res.write(`data: ${JSON.stringify(usageData)}\n\n`);
+            // const values = new Array(map.values());
+            // res.write(map.toString());
+            const jsonString = JSON.stringify(Array.from(map.entries()));
+            console.log(jsonString);
+            res.write(jsonString);
           });
           stream.on('error', err => {
             console.error(`Error on container stats stream: ${err.message}`);
