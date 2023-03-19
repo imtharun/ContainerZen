@@ -7,6 +7,7 @@ import {
 import { RiUserSettingsLine as UserSettingIcon } from "react-icons/ri";
 import { BsFillDatabaseFill as VolumesIcon } from "react-icons/bs";
 import { BiDisc as ImagesIcon } from "react-icons/bi";
+import { SiLinuxcontainers as ContainerIcon } from "react-icons/si";
 
 const SideBar = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -27,6 +28,10 @@ const SideBar = () => {
     {
       icon: <VolumesIcon className="w-[1.4rem] h-6" />,
       name: "Volumes",
+    },
+    {
+      icon: <ContainerIcon className="w-[1.4rem] h-6" />,
+      name: "Containers",
     },
     // {
     //   icon: <UserSettingIcon className="w-[1.4rem] h-6" />,

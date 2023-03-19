@@ -1,22 +1,41 @@
 import React, { useEffect, useState } from "react";
 import Card from "./Card";
-import io from "socket.io-client";
+// import socket from "./socket";
 
 const Dashboard = () => {
-  // const streamer = async () => {
-  //   const socket = io("http://localhost:6000");
-  //   socket.on("message", (event) => {
-  //     const usageData = JSON.parse(event.data);
-  //     console.log(usageData);
-
-  //     console.log(`CPU usage: ${usageData.cpuUsage}%`);
-  //     console.log(`Memory usage: ${usageData.memoryUsage}MB`);
-  //   });
-  // };
-
   // useEffect(() => {
-  //   streamer();
+  //   // socket.on("connect", () => {
+  //   //   console.log("Connected to server");
+  //   // });
+
+  //   // socket.on("disconnect", () => {
+  //   //   console.log("Disconnected from server");
+  //   // });
+
+  //   // return () => {
+  //   //   socket.disconnect();
+  //   // };
   // }, []);
+
+  useEffect(() => {
+    const socket = new WebSocket("ws://localhost:6000/");
+    console.log(socket);
+    socket.addEventListener("open", () => {
+      console.log("Connected to server");
+    });
+
+    socket.addEventListener("close", () => {
+      console.log("Disconnected from server");
+    });
+
+    socket.addEventListener("message", (event) => {
+      console.log("Received message:", event.data);
+    });
+
+    window.addEventListener("beforeunload", function () {
+      socket.close();
+    });
+  }, []);
 
   return (
     <div className="flex flex-col bg-dark text-light p-2 sm:ml-[3rem] sm:px-[5rem] pt-4 pb-4 h-[90vh]">
