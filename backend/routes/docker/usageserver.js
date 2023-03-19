@@ -14,7 +14,6 @@ function startserver(){
       docker.listContainers((err, containerList) => {
         if (err) {
           console.error(`Failed to list containers: ${err.message}`);
-          res.status(500).send(`Failed to list containers: ${err.message}`);
           return;
         }
         console.log(`Found ${containerList.length} running containers`);

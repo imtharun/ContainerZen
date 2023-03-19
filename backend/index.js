@@ -34,7 +34,7 @@ app.use((req,res,next)=>{
 });
   
 app.listen(port, () => {
-    console.log("Server started to listen...");
+    console.log("Server Started to listen...");
 });
 
 async function validateCookiesfunc (req, res, next) {

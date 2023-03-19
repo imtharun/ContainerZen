@@ -16,6 +16,11 @@ async function deleteimage(image){
     return delimage;
 }
 
+async function listimages(){
+    const images = await docker.listImages();
+    return images;
+}
+
 
 // ---------------------------------------Containers--------------------------------------------
 async function startcontainer(containerid){
@@ -31,14 +36,13 @@ async function stopcontainer(containerid){
 }
 
 async function listcontainers(){
-    const containers = await docker.listContainers();
+    const containers = await docker.listContainers({ all: true });
     return containers
 }
 
 async function createContainer(containerName, imageName, networkName, hostvolume,containervolume, hostport,containerport,restartpolicy) {
   // Check if the image exists locally
   let image = await docker.getImage(imageName).inspect().catch(() => null);
-
   if (!image) {
     console.log(`Image '${imageName}' not found locally. Pulling from Docker Hub...`);
 
@@ -55,33 +59,62 @@ async function createContainer(containerName, imageName, networkName, hostvolume
         }
       });
     });
-
     // Get the image again to make sure it was downloaded successfully
     image = await docker.getImage(imageName).inspect();
   }
+  const portbindings = {
+    [`${containerport}/tcp`]: [
+      {
+        HostPort: `${hostport}`,
+      },]
+  };
 
   // Create the container
-  const container = await docker.createContainer({
-    Image: imageName,
-    name: containerName,
-    RestartPolicy: {
-      Name: restartpolicy,
-      MaximumRetryCount: 5,
-    },
-    HostConfig: {
-      Binds: [`${hostvolume}:${containervolume}`],
-      PortBindings: { [`${containerport}/tcp`]: [{ 'HostPort': `${hostport}` }] },
-    },
-    NetworkingConfig: {
-      EndpointsConfig: {
-        [networkName]: {}
-      }
-    }
-  });
-
-  await container.start();
-  console.log(`Container '${containerName}' created and started`);  
-  return container;
+  if(hostvolume && containervolume){
+    console.log("edsf")
+    const container = await docker.createContainer({
+      Image: imageName,
+      name: containerName,
+      ExposedPorts:{containerport: {}},
+      RestartPolicy: {
+        Name: restartpolicy,
+        MaximumRetryCount: 5,
+      },
+      HostConfig: {
+        Binds: [`${hostvolume}:${containervolume}`],
+        PortBindings: portbindings,
+      },
+      // NetworkingConfig: {
+      //   EndpointsConfig: {
+      //     [networkName]: {}
+      //   }
+      // }
+    });
+    await container.start();
+    console.log(`Container '${containerName}' created and started`);  
+    return container;
+  }else{
+    const container = await docker.createContainer({
+      Image: imageName,
+      name: containerName,
+      ExposedPorts:{containerport: {}},
+      RestartPolicy: {
+        Name: restartpolicy,
+        MaximumRetryCount: 5,
+      },
+      HostConfig: {
+        PortBindings: portbindings,
+      },
+      // NetworkingConfig: {
+      //   EndpointsConfig: {
+      //     [networkName]: {}
+      //   }
+      // }
+    });
+    await container.start();
+    console.log(`Container '${containerName}' created and started`);  
+    return container;
+  }
     
 }
 
@@ -93,6 +126,11 @@ async function restartcontainer(containerid){
 
 async function removeContainer(containerId) {
     const container = docker.getContainer(containerId);
+    try{
+      await container.stop();
+    }catch(err){
+      console.log(err);
+    }
     await container.remove();
 }
 
@@ -141,22 +179,38 @@ async function deleteVolume(volumeName) {
     await docker.getVolume(volumeName).remove();
 }
 
+async function listvolumes(){
+    const volumes = await docker.listVolumes();
+    return volumes;
+}
+
 
 // ---------------------------------------Networks--------------------------------------------
 
-async function createNetwork(name, driver) {
+async function createNetwork(networkName, driver) {
   try {
-    const network = await docker.createNetwork({
-      Name: name,
-      Driver: driver,
-    });
-    console.log(`Network ${name} created successfully with driver ${driver}.`);
+    // Check if the network already exists
+    const network = await docker.getNetwork(networkName).inspect();
+    console.log(`Network ${networkName} already exists`);
     return network;
   } catch (error) {
-    console.error(`Error creating network ${name}: ${error}`);
-    throw error;
+    // Create a new network if it doesn't exist
+    console.log(`Creating network ${networkName}`);
+    const networkOptions = {
+      Name: networkName,
+      Driver: driver,
+    };
+    const network = await docker.createNetwork(networkOptions);
+    console.log(`Created network ${networkName}`);
+    return network;
   }
 }
+
+async function listnetworks(){
+    const networks = await docker.listNetworks();
+    return networks;
+}
+
 
 async function deleteNetwork(name) {
   try {
@@ -186,4 +240,7 @@ module.exports = {
     createNetwork,
     deleteimage,
     deleteNetwork,
+    listvolumes,
+    listnetworks,
+    listimages,
 }

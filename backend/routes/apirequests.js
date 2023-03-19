@@ -4,17 +4,9 @@ const router = express.Router();
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
 router.use(express.json());
-const io = require('socket.io');
 const dockerapi = require("./docker/dockerapi")
 
-//imports for streaming data
-const http = require('http');
-const WebSocket = require('ws');
-const server = http.createServer(router);
-const wss = new WebSocket.Server({ server });
 
-const Docker = require('dockerode');
-const docker = new Docker();
 
 
 
@@ -38,6 +30,15 @@ router.get("/deleteimage",async(req,res)=>{
     try{
         dockerapi.deleteimage(image)
         res.send("image deleted")
+    }catch(error){
+        res.send("Unable to fetch container image");
+    }
+});
+
+router.get("/listimages",async(req,res)=>{
+    try{
+        const images = await dockerapi.listimages();
+        res.json(images);
     }catch(error){
         res.send("Unable to fetch container image");
     }
@@ -77,20 +78,22 @@ router.get("/startcontainer",async(req,res)=>{
 
 //to create a new docker container
 router.get("/createcontainer",async(req,res)=>{
+    const containername = req.body.containername;
+    const containerimage = req.body.image;
+    const containernetwork = req.body.network;
+    const hostvolume = req.body.hostvolume;
+    const containervolume = req.body.containervolume;
+    const hostport = req.body.hostport;
+    const containerport = req.body.containerport;
+    const restartpolicy = req.body.restartpolicy;
 
-    //name
-    //image
-    //restartpolicy
-    //network
-    //networkmode
-    //hostvolume
-    //containervolume
     try{
         const networ = await dockerapi.createNetwork("my-network", "bridge");
-        const container = await dockerapi.createContainer("my-container", "ubuntu:latest", "my-network", "hostvolume", "containervolume", 8080, 8080, "always");
+        const container = await dockerapi.createContainer("my-container", "docker/getting-started:latest", "my-network", "", "", 8080, 80, "always");
         res.status(200).json(container);
     }catch(error){
-        res.send("Unable to fetch container image");
+        console.log(error);
+        res.send(error);
     }
 })
 
@@ -122,7 +125,7 @@ router.get("/stopcontainer",async(req,res)=>{
         res.send("container not found");
         }
         else{
-            res.send("Unknown error");
+            res.send(error);
         }
     }
     
@@ -139,7 +142,7 @@ router.get("/deletecontainer",async(req,res)=>{
         res.send("container not found");
         }
         else{
-            res.send("Unknown error");
+            res.send(error);
         }
     }
     
@@ -169,12 +172,23 @@ router.get("/deletevolume",async(req,res)=>{
     }
 });
 
+router.get("/listvolumes",async(req,res)=>{
+    try{
+        const volumes = await dockerapi.listvolumes();
+        res.json(volumes);
+    }
+    catch(error){
+        res.send("Unable to list volumes");
+    }
+});
+
 
 //---------------------------------------Networks--------------------------------------------
 router.get("/createnetwork",async(req,res)=>{
     const networkName = "my-network"
+    const networkDriver = "bridge"
     try{
-        await dockerapi.createNetwork(networkName, "bridge");
+        await dockerapi.createNetwork(networkName, networkDriver);
         res.json("created network");
     }
     catch(error){
@@ -190,6 +204,17 @@ router.get("/deletenetwork",async(req,res)=>{
     }
     catch(error){
         res.send("Unable to delete network");
+    }
+});
+
+router.get("/listnetworks",async(req,res)=>{
+    try{
+        const networks = await dockerapi.listnetworks();
+        res.json(networks);
+    }
+    catch(error){
+        console.log(error);
+        res.send(error);
     }
 });
 
