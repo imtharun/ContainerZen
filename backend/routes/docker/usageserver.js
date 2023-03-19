@@ -29,11 +29,14 @@ function startserver(){
             console.log(`Streaming stats for container ${container.id}`);
             stream.on('data', chunk => {
               const data = JSON.parse(chunk.toString('utf8'));
+              const cpuDelta = data.cpu_stats.cpu_usage.total_usage - data.precpu_stats.cpu_usage.total_usage;
+              const systemDelta = data.cpu_stats.system_cpu_usage - data.precpu_stats.system_cpu_usage;
+              const cpuPercent = cpuDelta / systemDelta * 100;
               const usageData = {
                 id: container.id,
                 name: containerInfo.Names[0].substring(1),
-                cpuUsage: data.cpu_stats.cpu_usage.total_usage,
-                memoryUsage: data.memory_stats.usage
+                cpuUsage: cpuPercent,
+                memoryUsage: data.memory_stats.usage /1024/1024
               };
               map.set(container.id, usageData);
               const jsonString = JSON.stringify(Array.from(map.entries()));
