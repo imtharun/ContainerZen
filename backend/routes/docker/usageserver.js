@@ -2,8 +2,8 @@ const WebSocket = require('ws');
 const Docker = require('dockerode');
 const docker = new Docker();
 
-  const dmport = 6000;
-  const dmserver = new WebSocket.Server({ port: dmport });
+const dmport = 6000;
+const dmserver = new WebSocket.Server({ port: dmport });
 
 function startserver(){  
   dmserver.on('connection', (socket) => {
@@ -40,7 +40,7 @@ function startserver(){
               };
               map.set(container.id, usageData);
               const jsonString = JSON.stringify(Array.from(map.entries()));
-              console.log(jsonString);
+              // console.log(jsonString);
               socket.send(jsonString);
             });
             stream.on('error', err => {

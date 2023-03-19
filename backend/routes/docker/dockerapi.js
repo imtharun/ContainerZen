@@ -10,6 +10,12 @@ const createimage = (image)=>{
     });
 }
 
+async function deleteimage(image){
+    const delimage = await docker.getImage(image);
+    await delimage.remove();
+    return delimage;
+}
+
 
 // ---------------------------------------Containers--------------------------------------------
 async function startcontainer(containerid){
@@ -29,43 +35,54 @@ async function listcontainers(){
     return containers
 }
 
-async function createContainer(imageName, containerName, port) {
-    // Check if the image exists locally
-    let image = await docker.getImage(imageName).inspect().catch(() => null);
-  
-    if (!image) {
-      console.log(`Image '${imageName}' not found locally. Pulling from Docker Hub...`);
-  
-      // Pull the image from Docker Hub
-      const stream = await docker.pull(imageName);
-  
-      // Wait for the image to finish downloading
-      await new Promise((resolve, reject) => {
-        docker.modem.followProgress(stream, (err, res) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(res);
-          }
-        });
+async function createContainer(containerName, imageName, networkName, hostvolume,containervolume, hostport,containerport,restartpolicy) {
+  // Check if the image exists locally
+  let image = await docker.getImage(imageName).inspect().catch(() => null);
+
+  if (!image) {
+    console.log(`Image '${imageName}' not found locally. Pulling from Docker Hub...`);
+
+    // Pull the image from Docker Hub
+    const stream = await docker.pull(imageName);
+
+    // Wait for the image to finish downloading
+    await new Promise((resolve, reject) => {
+      docker.modem.followProgress(stream, (err, res) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res);
+        }
       });
-  
-      // Get the image again to make sure it was downloaded successfully
-      image = await docker.getImage(imageName).inspect();
-    }
-  
-    // Create the container
-    const container = await docker.createContainer({
-      Image: imageName,
-      name: containerName,
-      ExposedPorts: { [`${port}/tcp`]: {} },
-      HostConfig: {
-        PortBindings: { [`${port}/tcp`]: [{ 'HostPort': `${port}` }] },
-      },
     });
-  
-    await container.start();
-    console.log(`Container '${containerName}' created and started`);
+
+    // Get the image again to make sure it was downloaded successfully
+    image = await docker.getImage(imageName).inspect();
+  }
+
+  // Create the container
+  const container = await docker.createContainer({
+    Image: imageName,
+    name: containerName,
+    RestartPolicy: {
+      Name: restartpolicy,
+      MaximumRetryCount: 5,
+    },
+    HostConfig: {
+      Binds: [`${hostvolume}:${containervolume}`],
+      PortBindings: { [`${containerport}/tcp`]: [{ 'HostPort': `${hostport}` }] },
+    },
+    NetworkingConfig: {
+      EndpointsConfig: {
+        [networkName]: {}
+      }
+    }
+  });
+
+  await container.start();
+  console.log(`Container '${containerName}' created and started`);  
+  return container;
+    
 }
 
 async function restartcontainer(containerid){
@@ -125,6 +142,36 @@ async function deleteVolume(volumeName) {
 }
 
 
+// ---------------------------------------Networks--------------------------------------------
+
+async function createNetwork(name, driver) {
+  try {
+    const network = await docker.createNetwork({
+      Name: name,
+      Driver: driver,
+    });
+    console.log(`Network ${name} created successfully with driver ${driver}.`);
+    return network;
+  } catch (error) {
+    console.error(`Error creating network ${name}: ${error}`);
+    throw error;
+  }
+}
+
+async function deleteNetwork(name) {
+  try {
+    const network = docker.getNetwork(name);
+    await network.remove();
+    console.log(`Network ${name} deleted successfully.`);
+  } catch (error) {
+    console.error(`Error deleting network ${name}: ${error}`);
+    throw error;
+  }
+}
+
+
+
+
 module.exports = {
     createimage,
     createContainer,
@@ -136,4 +183,7 @@ module.exports = {
     createVolume,
     deleteVolume,
     getContainerStats,
+    createNetwork,
+    deleteimage,
+    deleteNetwork,
 }
