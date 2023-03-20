@@ -172,7 +172,7 @@ async function getContainerStats(containerId) {
 
 async function fetchContainerStats() {
   // get all running containers
-  const containers = await docker.listContainers({ all: true });
+  const containers = await docker.listContainers();
   
   // array to hold container stats
   const containerStats = [];
