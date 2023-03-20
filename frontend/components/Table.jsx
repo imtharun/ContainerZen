@@ -10,6 +10,8 @@ const Table = ({ headers, rows }) => {
   const searchRef = useRef();
   const [search, setSearch] = useState("");
 
+  console.log();
+
   return (
     <div className="h-[90vh] bg-dark text-light p-2 sm:ml-[3rem] sm:px-[5rem] pt-8 pb-4 overflow-y-scroll no-scrollbar">
       <div className="bg-light flex justify-between text-dark p-3 rounded-t-md flex-col sm:flex-row items-center">
@@ -76,22 +78,24 @@ const T = ({ search, headers, rows }) => {
                         className="border-b dark:border-neutral-500"
                       >
                         <td className="whitespace-nowrap px-6 py-4">
-                          {row.name}
+                          {row.Id}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {row.project}
+                          {row.Names[0]}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {row.status}
+                          {row.State}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {row.image}
+                          {row.Image}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {row.ports}
+                          {row.Ports.length === 0
+                            ? "-"
+                            : row.Ports[0].PrivatePort}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {row.createdAt}
+                          {"" + new Date(+row.Created * 1000).toDateString()}
                         </td>
                       </tr>
                     );
@@ -120,7 +124,7 @@ const T = ({ search, headers, rows }) => {
                             {row.image}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            {row.ports}
+                            {/* {row.ports} */}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
                             {row.createdAt}

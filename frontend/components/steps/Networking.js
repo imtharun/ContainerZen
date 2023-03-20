@@ -34,6 +34,33 @@ const Networking = () => {
           />
         </div>
       </div>
+      <div className="flex items-center">
+        <div className="w-full mx-2 flex-1">
+          <div className="my-2 flex border-b border-b-gray-200 bg-transparent p-1">
+            <input
+              onChange={handleChange}
+              value={userData["hostPort"] || ""}
+              name="hostPort"
+              placeholder="Host Port"
+              type="text"
+              className="p-1 px-2 appearance-none outline-none w-full text-light bg-transparent"
+            />
+          </div>
+        </div>
+        :
+        <div className="w-full mx-2 flex-1">
+          <div className="my-2 flex border-b border-b-gray-200 bg-transparent p-1">
+            <input
+              onChange={handleChange}
+              value={userData["containerPort"] || ""}
+              name="containerPort"
+              placeholder="Container Port"
+              type="text"
+              className="p-1 px-2 appearance-none outline-none w-full text-light bg-transparent"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

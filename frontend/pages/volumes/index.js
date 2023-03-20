@@ -4,8 +4,12 @@ import {
   AiOutlinePlusCircle as PlusIcon,
   AiOutlineSearch as SearchIcon,
 } from "react-icons/ai";
+import axios from "axios";
+import { VscRefresh as RefreshIcon } from "react-icons/vsc";
 
-const Volumes = () => {
+const Volumes = ({ data: initialData }) => {
+  const [data, setData] = useState(initialData.Volumes);
+  console.log(data);
   return (
     <>
       <Head>
@@ -32,49 +36,41 @@ const Volumes = () => {
       </Head>
       <main>
         <Table
-          headers={["Name", "Project", "Driver", "Created"]}
-          rows={[
-            {
-              name: "hai",
-              project: "haithisisnice",
-              driver: "cdrive",
-              created: "12apr21",
-            },
-            {
-              name: "nope",
-              project: "haithisisnice",
-              driver: "cdrive",
-              created: "12apr21",
-            },
-            {
-              name: "this",
-              project: "haithisisnice",
-              driver: "cdrive",
-              created: "12apr21",
-            },
-          ]}
+          headers={["Name", "Mount point", "Driver", "Created"]}
+          rows={data}
+          setData={setData}
         />
       </main>
     </>
   );
 };
 
-const Table = ({ headers, rows }) => {
+const Table = ({ headers, rows, setData }) => {
   const searchRef = useRef();
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
+
+  const refreshHandler = async () => {
+    const data = await axios.get("http://localhost:5000/api/listvolumes");
+    if (data.status === 200) {
+      setData(data.data.Volumes);
+    }
+  };
 
   return (
     <div className="h-[90vh] bg-dark text-light p-2 sm:ml-[3rem] sm:px-[5rem] pt-8 pb-4 overflow-y-scroll no-scrollbar">
       <div className="bg-light flex justify-between text-dark p-3 rounded-t-md flex-col sm:flex-row items-center">
         <div className="flex items-center">
-          <h1 className="font-medium text-base text-center">Images</h1>
+          <h1 className="font-medium text-base text-center">Volumes</h1>
           <button
             onClick={() => setShowModal(!showModal)}
             type="button"
             className="pl-2"
           >
             <PlusIcon className="w-5 h-5" />
+          </button>
+          <button onClick={refreshHandler} className="ml-2">
+            <RefreshIcon className="w-5 h-5" />
           </button>
           <Modal setShowModal={setShowModal} showModal={showModal} />
         </div>
@@ -91,7 +87,7 @@ const Search = ({ searchRef, search, setSearch }) => {
   return (
     <div className="border-b-[1.5px] text-dark border-b-mid-dark w-[15rem] text-sm flex justify-between p-1 items-center">
       <input
-        placeholder="Search"
+        placeholder="Search with name"
         className="bg-light outline-none"
         type="text"
         value={search}
@@ -130,24 +126,24 @@ const T = ({ search, headers, rows }) => {
                         className="border-b dark:border-neutral-500"
                       >
                         <td className="whitespace-nowrap px-6 py-4">
-                          {row.name}
+                          {row.Name}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {row.project}
+                          {row.Mountpoint}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {row.driver}
+                          {row.Driver}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {row.created}
+                          {row.CreatedAt.slice(0, 10)}
                         </td>
                       </tr>
                     );
                   })
-                ) : rows.filter((row) => row.name.includes(search)).length !==
+                ) : rows.filter((row) => row.Name.includes(search)).length !==
                   0 ? (
                   rows
-                    .filter((row) => row.name.includes(search))
+                    .filter((row) => row.Name.includes(search))
                     .map((row, index) => {
                       return (
                         <tr
@@ -155,16 +151,16 @@ const T = ({ search, headers, rows }) => {
                           className="border-b dark:border-neutral-500"
                         >
                           <td className="whitespace-nowrap px-6 py-4">
-                            {row.name}
+                            {row.Name}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            {row.project}
+                            {row.Mountpoint}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            {row.driver}
+                            {row.Driver}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            {row.created}
+                            {row.CreatedAt.slice(0, 10)}
                           </td>
                         </tr>
                       );
@@ -189,8 +185,20 @@ const Modal = ({ showModal, setShowModal }) => {
   const volumeRef = useRef();
   const [volume, setVolume] = useState("");
 
+  const pullVolume = async () => {
+    const data = await axios.post("http://localhost:5000/api/createvolume", {
+      volumeName: volume,
+    });
+    if (data.status === 200) {
+      setVolume("");
+      console.log("volume created");
+    } else {
+      console.log("error occurred");
+    }
+  };
+
   const createHandler = () => {
-    console.log(volume);
+    pullVolume();
   };
 
   return (
@@ -203,7 +211,7 @@ const Modal = ({ showModal, setShowModal }) => {
               <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-light outline-none focus:outline-none">
                 {/*header*/}
                 <div className="flex items-start justify-between p-5 border-b border-solid border-dark rounded-t">
-                  <h3 className="text-xl text-dark">Create Image</h3>
+                  <h3 className="text-xl text-dark">Create Volume</h3>
                   <button
                     className="text-dark"
                     onClick={() => setShowModal(false)}
@@ -253,8 +261,9 @@ const Modal = ({ showModal, setShowModal }) => {
 };
 
 export const getServerSideProps = async (ctx) => {
+  const data = await axios.get("http://localhost:5000/api/listvolumes");
   return {
-    props: { heading: "Volumes" },
+    props: { heading: "Volumes", data: data.data },
   };
 };
 

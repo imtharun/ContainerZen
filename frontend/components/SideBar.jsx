@@ -18,6 +18,10 @@ const SideBar = () => {
       name: "Dashboard",
     },
     {
+      icon: <ContainerIcon className="w-[1.4rem] h-6" />,
+      name: "Containers",
+    },
+    {
       icon: <ApplicationIcon className="w-[1.4rem] h-6" />,
       name: "Applications",
     },
@@ -29,10 +33,7 @@ const SideBar = () => {
       icon: <VolumesIcon className="w-[1.4rem] h-6" />,
       name: "Volumes",
     },
-    {
-      icon: <ContainerIcon className="w-[1.4rem] h-6" />,
-      name: "Containers",
-    },
+
     // {
     //   icon: <UserSettingIcon className="w-[1.4rem] h-6" />,
     //   name: "Settings",

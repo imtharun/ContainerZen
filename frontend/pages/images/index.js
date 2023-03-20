@@ -1,11 +1,16 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Head from "next/head";
 import {
   AiOutlinePlusCircle as PlusIcon,
   AiOutlineSearch as SearchIcon,
 } from "react-icons/ai";
+import { VscRefresh as RefreshIcon } from "react-icons/vsc";
+import axios from "axios";
 
-const Images = () => {
+const Images = ({ data: initialData }) => {
+  const [data, setData] = useState(initialData);
+  console.log(data);
+
   return (
     <>
       <Head>
@@ -33,21 +38,23 @@ const Images = () => {
       <main>
         <Table
           headers={["Tag", "Id", "Created"]}
-          rows={[
-            { tag: "1", id: "adfaf1231dfa", created: "asdffasd" },
-            { tag: "2", id: "bfyhg2322fgh", created: "asdffasd" },
-            { tag: "3", id: "vkjdf2323efg", created: "asdffasd" },
-          ]}
+          rows={data}
+          setData={setData}
         />
       </main>
     </>
   );
 };
 
-const Table = ({ headers, rows }) => {
+const Table = ({ headers, rows, setData }) => {
   const searchRef = useRef();
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
+
+  const refreshHandler = async () => {
+    const data = await axios.get("http://localhost:5000/api/listimages");
+    setData(data.data);
+  };
 
   return (
     <div className="h-[90vh] bg-dark text-light p-2 sm:ml-[3rem] sm:px-[5rem] pt-8 pb-4 overflow-y-scroll no-scrollbar">
@@ -62,6 +69,9 @@ const Table = ({ headers, rows }) => {
             <PlusIcon className="w-5 h-5" />
           </button>
           <Modal setShowModal={setShowModal} showModal={showModal} />
+          <button onClick={refreshHandler} className="ml-2">
+            <RefreshIcon className="w-5 h-5" />
+          </button>
         </div>
         <Search search={search} setSearch={setSearch} searchRef={searchRef} />
       </div>
@@ -76,7 +86,7 @@ const Search = ({ searchRef, search, setSearch }) => {
   return (
     <div className="border-b-[1.5px] text-dark border-b-mid-dark w-[15rem] text-sm flex justify-between p-1 items-center">
       <input
-        placeholder="Search"
+        placeholder="Search with Tag"
         className="bg-light outline-none"
         type="text"
         value={search}
@@ -115,21 +125,21 @@ const T = ({ search, headers, rows }) => {
                         className="border-b dark:border-neutral-500"
                       >
                         <td className="whitespace-nowrap px-6 py-4">
-                          {row.tag}
+                          {row.RepoTags[0]}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {row.id}
+                          {row.Id}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          {row.created}
+                          {"" + new Date(+row.Created * 1000).toDateString()}
                         </td>
                       </tr>
                     );
                   })
-                ) : rows.filter((row) => row.id.includes(search)).length !==
-                  0 ? (
+                ) : rows.filter((row) => row.RepoTags[0]?.includes(search))
+                    .length !== 0 ? (
                   rows
-                    .filter((row) => row.id.includes(search))
+                    .filter((row) => row.RepoTags[0]?.includes(search))
                     .map((row, index) => {
                       return (
                         <tr
@@ -137,13 +147,13 @@ const T = ({ search, headers, rows }) => {
                           className="border-b dark:border-neutral-500"
                         >
                           <td className="whitespace-nowrap px-6 py-4">
-                            {row.tag}
+                            {row.RepoTags[0]}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            {row.id}
+                            {row.Id}
                           </td>
                           <td className="whitespace-nowrap px-6 py-4">
-                            {row.created}
+                            {row.Labels["org.opencontainers.image.created"]}
                           </td>
                         </tr>
                       );
@@ -168,8 +178,20 @@ const Modal = ({ showModal, setShowModal }) => {
   const imageRef = useRef();
   const [image, setImage] = useState("");
 
+  const pullImage = async () => {
+    const data = await axios.post("http://localhost:5000/api/createimage", {
+      image,
+    });
+    if (data.status === 200) {
+      setImage("");
+      console.log("image created");
+    } else {
+      console.log("error occurred");
+    }
+  };
+
   const createHandler = () => {
-    console.log(image);
+    pullImage();
   };
 
   return (
@@ -232,8 +254,9 @@ const Modal = ({ showModal, setShowModal }) => {
 };
 
 export const getServerSideProps = async (ctx) => {
+  const data = await axios.get("http://localhost:5000/api/listimages");
   return {
-    props: { heading: "Images" },
+    props: { heading: "Images", data: data.data },
   };
 };
 

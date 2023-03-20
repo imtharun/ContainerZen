@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   VscDebugStart as StartIcon,
   VscRefresh as RefreshIcon,
@@ -6,34 +7,11 @@ import {
 } from "react-icons/vsc";
 import { MdDeleteOutline as DeleteIcon } from "react-icons/md";
 import axios from "axios";
+import { MdOutlineRestartAlt as RestartIcon } from "react-icons/md";
+import { AiOutlinePlusCircle as CreateIcon } from "react-icons/ai";
 
 const Row = () => {
   const [rows, setRows] = useState([]);
-  //   const rows = [
-  //     {
-  //       id: "f7de05aff19f019e34a1978ce4dbeb3d285f0113328e0730875ca721c74940f2",
-  //       name: "Yacht",
-  //       status: "running",
-  //     },
-  //     {
-  //       id: "f7de05aff19f019e34a1978ce4dbeb3d285f0113328e0730875ca721c74940f2",
-
-  //       name: "Portainer",
-  //       status: "Stopped",
-  //     },
-  //     {
-  //       id: "f7de05aff19f019e34a1978ce4dbeb3d285f0113328e0730875ca721c74940f2",
-
-  //       name: "Qbittorent",
-  //       status: "running",
-  //     },
-  //     {
-  //       id: "f7de05aff19f019e34a1978ce4dbeb3d285f0113328e0730875ca721c74940f2",
-
-  //       name: "MAB/malware-attacker",
-  //       status: "running",
-  //     },
-  //   ];
 
   const getContainers = async () => {
     const data = await axios.get("http://localhost:5000/api/listcontainers");
@@ -48,7 +26,7 @@ const Row = () => {
     const data = await axios.post(
       `http://localhost:5000/api/${type}container`,
       {
-        containerid: id,
+        containerId: id,
       }
     );
   };
@@ -61,8 +39,8 @@ const Row = () => {
     post(rows[index].Id, "stop");
   };
 
-  const refreshHandler = (index) => {
-    post(rows[index].Id, "refresh");
+  const restartHandler = (index) => {
+    post(rows[index].Id, "restart");
   };
 
   const deleteHandler = (index) => {
@@ -88,9 +66,9 @@ const Row = () => {
               <h1 className="text-lg">{r.Names[0].slice(1)}</h1>
               <p
                 className={`text-sm ml-3 ${
-                  r.State.toLowerCase() === "stopped"
-                    ? "text-red-500"
-                    : "text-green-500"
+                  r.State.toLowerCase() === "running"
+                    ? "text-green-500"
+                    : "text-red-500"
                 }`}
               >
                 {r.State}
@@ -121,11 +99,11 @@ const Row = () => {
               <div className="flex flex-col sm:flex-row">
                 <button
                   id={index}
-                  onClick={() => refreshHandler(index)}
+                  onClick={() => restartHandler(index)}
                   className="flex justify-center items-center mr-3"
                 >
-                  Refresh
-                  <RefreshIcon className="ml-1 w-4 h-4" />
+                  Restart
+                  <RestartIcon className="ml-1 w-4 h-4" />
                 </button>
                 <button
                   id={index}

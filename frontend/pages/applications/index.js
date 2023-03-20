@@ -1,7 +1,11 @@
 import Head from "next/head";
 import Table from "@/components/Table";
+import { useState } from "react";
+import axios from "axios";
 
-const Application = () => {
+const Application = ({ data: initialData }) => {
+  const [data, setData] = useState(initialData);
+  console.log(initialData);
   return (
     <>
       <Head>
@@ -28,33 +32,9 @@ const Application = () => {
       </Head>
       <main>
         <Table
-          headers={[
-            "Name",
-            "Project",
-            "Status",
-            "Image",
-            "Ports",
-            "Created At",
-          ]}
-          rows={[
-            {
-              name: "affectionate_bhaskara",
-              project: "-",
-              status: "running",
-              image: "wsong008/mab-malware",
-              ports: "8000",
-              createdAt: "March 15, 2023 9:54 PM",
-            },
-
-            {
-              name: "qbittorrent",
-              project: "-",
-              status: "running",
-              image: "lscr.io/linuxserver/qbittorrent",
-              ports: "9000",
-              createdAt: "March 15, 2023 9:54 PM",
-            },
-          ]}
+          headers={["Id", "Name", "Status", "Image", "Ports", "Created At"]}
+          rows={data}
+          setdata={setData}
         />
       </main>
     </>
@@ -62,8 +42,10 @@ const Application = () => {
 };
 
 export const getServerSideProps = async (ctx) => {
+  const data = await axios.get("http://localhost:5000/api/listcontainers");
+
   return {
-    props: { heading: "Applications " },
+    props: { heading: "Applications ", data: data.data },
   };
 };
 
