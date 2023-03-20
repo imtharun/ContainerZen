@@ -12,7 +12,7 @@ const dockerapi = require("./docker/dockerapi")
 
 //---------------------------------------Images--------------------------------------------
 //to pull an image from dockerhub
-router.get("/createimage",async(req,res)=>{
+router.post("/createimage",async(req,res)=>{
     // const image = req.body.image;
     const image = "ubuntu:latest"
     try{
@@ -24,7 +24,7 @@ router.get("/createimage",async(req,res)=>{
     
 });
 
-router.get("/deleteimage",async(req,res)=>{
+router.post("/deleteimage",async(req,res)=>{
     // const image = req.body.image;
     const image = "ubuntu:latest"
     try{
@@ -98,7 +98,7 @@ router.post("/createcontainer",async(req,res)=>{
 })
 
 //to restart a docker container
-router.get("/restartcontainer",async(req,res)=>{
+router.post("/restartcontainer",async(req,res)=>{
     const containerid = req.body.containerId;
     console.log(containerid+"restart");
     // const containerid = "my-container"
@@ -116,7 +116,7 @@ router.get("/restartcontainer",async(req,res)=>{
     }
 })
 
-router.get("/stopcontainer",async(req,res)=>{
+router.post("/stopcontainer",async(req,res)=>{
     // const containerid = "my-container"
     const containerid = req.body.containerId;
     onsole.log(containerid+"stop");
@@ -136,7 +136,7 @@ router.get("/stopcontainer",async(req,res)=>{
     
 });
 
-router.get("/deletecontainer",async(req,res)=>{
+router.post("/deletecontainer",async(req,res)=>{
     // const containerid = "my-container"
     const containerid =req.body.containerId;
     onsole.log(containerid+"delete");
@@ -158,7 +158,7 @@ router.get("/deletecontainer",async(req,res)=>{
 
 
 //---------------------------------------Volumes--------------------------------------------
-router.get("createvolume",async(req,res)=>{
+router.post("createvolume",async(req,res)=>{
     const volumeName = "my-volume"
     try{
         await dockerapi.createVolume(volumeName);
@@ -169,7 +169,7 @@ router.get("createvolume",async(req,res)=>{
     }
 });
 
-router.get("/deletevolume",async(req,res)=>{
+router.post("/deletevolume",async(req,res)=>{
     const volumeName = "my-volume"
     try{
         await dockerapi.deleteVolume(volumeName);
@@ -192,7 +192,7 @@ router.get("/listvolumes",async(req,res)=>{
 
 
 //---------------------------------------Networks--------------------------------------------
-router.get("/createnetwork",async(req,res)=>{
+router.post("/createnetwork",async(req,res)=>{
     const networkName = "my-network"
     const networkDriver = "bridge"
     try{
@@ -204,7 +204,7 @@ router.get("/createnetwork",async(req,res)=>{
     }
 });
 
-router.get("/deletenetwork",async(req,res)=>{
+router.post("/deletenetwork",async(req,res)=>{
     const networkName = "my-network"
     try{
         await dockerapi.deleteNetwork(networkName);
