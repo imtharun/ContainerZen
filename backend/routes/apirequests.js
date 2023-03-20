@@ -19,7 +19,7 @@ router.get("/createimage",async(req,res)=>{
         dockerapi.createimage(docker,image)
         res.send("image created")
     }catch(error){
-        res.send("Unable to fetch container image");
+        res.send(error);
     }
     
 });
@@ -58,9 +58,9 @@ router.get("/listcontainers", async (req, res) => {
 });
 
 //to start a docker container using container name
-router.get("/startcontainer",async(req,res)=>{
-    // const containerid = req.body.containerid;
-    const containerid = "my-container"
+router.post("/startcontainer",async(req,res)=>{
+    const containerid = req.body.containerId;
+    console.log(containerid+"start request");
     try{
         const container = await dockerapi.startcontainer(containerid);
         res.json(container);
@@ -77,7 +77,7 @@ router.get("/startcontainer",async(req,res)=>{
 
 
 //to create a new docker container
-router.get("/createcontainer",async(req,res)=>{
+router.post("/createcontainer",async(req,res)=>{
     const containername = req.body.containername;
     const containerimage = req.body.image;
     const containernetwork = req.body.network;
@@ -99,7 +99,9 @@ router.get("/createcontainer",async(req,res)=>{
 
 //to restart a docker container
 router.get("/restartcontainer",async(req,res)=>{
-    const containerid = "my-container"
+    const containerid = req.body.containerId;
+    console.log(containerid+"restart");
+    // const containerid = "my-container"
     try{
         const container = await dockerapi.restartcontainer(containerid);
         res.json(container);
@@ -115,7 +117,10 @@ router.get("/restartcontainer",async(req,res)=>{
 })
 
 router.get("/stopcontainer",async(req,res)=>{
-    const containerid = "my-container"
+    // const containerid = "my-container"
+    const containerid = req.body.containerId;
+    onsole.log(containerid+"stop");
+
     try{
         const container = await dockerapi.stopcontainer(containerid);
         res.json(container);
@@ -132,7 +137,10 @@ router.get("/stopcontainer",async(req,res)=>{
 });
 
 router.get("/deletecontainer",async(req,res)=>{
-    const containerid = "my-container"
+    // const containerid = "my-container"
+    const containerid =req.body.containerId;
+    onsole.log(containerid+"delete");
+
     try{
         const container = await dockerapi.removeContainer(containerid);
         res.json(container);

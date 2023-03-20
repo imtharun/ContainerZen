@@ -5,7 +5,7 @@ const docker = new Docker();
 // ---------------------------------------Images--------------------------------------------
 const createimage = (image)=>{
     console.log(image)
-    docker.createImage({fromImage: image}, function (err, stream) {
+    docker.getImage(image, function (err, stream) {
         stream.pipe(process.stdout);
     });
 }
@@ -225,6 +225,9 @@ async function deleteNetwork(name) {
 
 
 
+
+
+//---------------------------------------Exports--------------------------------------------
 
 module.exports = {
     createimage,
