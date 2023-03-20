@@ -12,14 +12,16 @@ const dockerapi = require("./docker/dockerapi")
 
 //---------------------------------------Images--------------------------------------------
 //to pull an image from dockerhub
-router.post("/createimage",async(req,res)=>{
-    const image = req.body.image;
-    console.log(image+"create");
-    // const image = "ubuntu:latest"
+router.get("/createimage",async(req,res)=>{
+    // const image = req.body.image;
+    // console.log(image+"create");
+    const image = "nginx:latest"
     try{
-        dockerapi.createimage(docker,image)
-        res.sendStatus(200).json("image created");
+        img = await dockerapi.createimage(image)
+        console.log(img)
+        res.sendStatus(200);
     }catch(error){
+        console.log(error);
         res.send(error);
     }
     
@@ -31,7 +33,7 @@ router.post("/deleteimage",async(req,res)=>{
     console.log(image+"delete");
     try{
         dockerapi.deleteimage(image)
-        res.sendStatus(200).json("image deleted");
+        res.sendStatus(200);
     }catch(error){
         res.send("Unable to fetch container image");
     }
@@ -65,7 +67,7 @@ router.post("/startcontainer",async(req,res)=>{
     console.log(containerid+"start request");
     try{
         const container = await dockerapi.startcontainer(containerid);
-        res.sendStatus(200).json("container started");
+        res.sendStatus(200);
     }
     catch(error){
         if(error.reason === 'no such container'){

@@ -3,10 +3,16 @@ const docker = new Docker();
 
 
 // ---------------------------------------Images--------------------------------------------
-const createimage = (image)=>{
-    console.log(image)
-    docker.getImage(image, function (err, stream) {
-        stream.pipe(process.stdout);
+async function createimage(image){
+    const stream = await docker.pull(image);
+    return new Promise((resolve, reject) => {
+      docker.modem.followProgress(stream, (err, res) => {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(res);
+      });
+
     });
 }
 
