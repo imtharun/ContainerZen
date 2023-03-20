@@ -18,7 +18,7 @@ router.post("/createimage",async(req,res)=>{
     // const image = "ubuntu:latest"
     try{
         dockerapi.createimage(docker,image)
-        res.send("image created")
+        res.sendStatus(200).json("image created");
     }catch(error){
         res.send(error);
     }
@@ -31,7 +31,7 @@ router.post("/deleteimage",async(req,res)=>{
     console.log(image+"delete");
     try{
         dockerapi.deleteimage(image)
-        res.send("image deleted")
+        res.sendStatus(200).json("image deleted");
     }catch(error){
         res.send("Unable to fetch container image");
     }
@@ -65,7 +65,7 @@ router.post("/startcontainer",async(req,res)=>{
     console.log(containerid+"start request");
     try{
         const container = await dockerapi.startcontainer(containerid);
-        res.json(container);
+        res.sendStatus(200).json("container started");
     }
     catch(error){
         if(error.reason === 'no such container'){
@@ -92,7 +92,7 @@ router.post("/createcontainer",async(req,res)=>{
     try{
         const networ = await dockerapi.createNetwork("my-network", "bridge");
         const container = await dockerapi.createContainer("my-container", "docker/getting-started:latest", "my-network", "", "", 8080, 80, "always");
-        res.status(200).json(container);
+        res.status(200).json("container created");
     }catch(error){
         console.log(error);
         res.send(error);
@@ -106,7 +106,7 @@ router.post("/restartcontainer",async(req,res)=>{
     // const containerid = "my-container"
     try{
         const container = await dockerapi.restartcontainer(containerid);
-        res.json(container);
+        rres.sendStatus(200).json("container restarted");
     }
     catch(error){
         if(error.reason === 'no such container'){
@@ -125,7 +125,7 @@ router.post("/stopcontainer",async(req,res)=>{
 
     try{
         const container = await dockerapi.stopcontainer(containerid);
-        res.json(container);
+        res.sendStatus(200).json("container stopped");
     }
     catch(error){
         if(error.reason === 'no such container'){
@@ -145,7 +145,7 @@ router.post("/deletecontainer",async(req,res)=>{
 
     try{
         const container = await dockerapi.removeContainer(containerid);
-        res.json(container);
+        res.sendStatus(200).json("container deleted");
     }
     catch(error){
         if(error.reason === 'no such container'){
@@ -166,7 +166,7 @@ router.post("createvolume",async(req,res)=>{
     console.log(volumeName+"create");
     try{
         await dockerapi.createVolume(volumeName);
-        res.json("created volume");
+        res.sendStatus(200).json("volume created");
     }
     catch(error){
         res.send("Unable to create volume");
@@ -179,7 +179,7 @@ router.post("/deletevolume",async(req,res)=>{
     console.log(volumeName+"delete");
     try{
         await dockerapi.deleteVolume(volumeName);
-        res.json("deleted volume");
+        res.sendStatus(200).json("volume deleted");
     }
     catch(error){
         res.send("Unable to delete volume");
