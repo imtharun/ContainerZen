@@ -90,11 +90,11 @@ async function createContainer(containerName, imageName, networkName, hostvolume
         Binds: [`${hostvolume}:${containervolume}`],
         PortBindings: portbindings,
       },
-      // NetworkingConfig: {
-      //   EndpointsConfig: {
-      //     [networkName]: {}
-      //   }
-      // }
+      NetworkingConfig: {
+        EndpointsConfig: {
+          [networkName]: {}
+        }
+      }
     });
     await container.start();
     console.log(`Container '${containerName}' created and started`);  
@@ -111,11 +111,11 @@ async function createContainer(containerName, imageName, networkName, hostvolume
       HostConfig: {
         PortBindings: portbindings,
       },
-      // NetworkingConfig: {
-      //   EndpointsConfig: {
-      //     [networkName]: {}
-      //   }
-      // }
+      NetworkingConfig: {
+        EndpointsConfig: {
+          [networkName]: {}
+        }
+      }
     });
     await container.start();
     console.log(`Container '${containerName}' created and started`);  
@@ -170,6 +170,41 @@ async function getContainerStats(containerId) {
   }
 }
 
+async function fetchContainerStats() {
+  // get all running containers
+  const containers = await docker.listContainers({ all: true });
+  
+  // array to hold container stats
+  const containerStats = [];
+
+  // loop through all containers
+  for (const container of containers) {
+    // get container stats
+    const stats = await docker.getContainer(container.Id).stats({ stream: false });
+
+    // extract relevant stats (CPU usage and memory usage)
+    const cpuUsage = stats.cpu_stats.cpu_usage.total_usage;
+    const systemCpuUsage = stats.cpu_stats.system_cpu_usage;
+    const memoryUsage = stats.memory_stats.usage;
+
+    // calculate CPU usage as a percentage
+    const cpuPercent = ((cpuUsage / systemCpuUsage) * 100).toFixed(2);
+
+    // convert memory usage to MB
+    const memoryUsageMB = (memoryUsage / 1024 / 1024).toFixed(2);
+
+    // add container stats to array
+    containerStats.push({
+      id: container.Id,
+      name: container.Names[0],
+      cpuUsage: cpuPercent,
+      memoryUsage: memoryUsageMB
+    });
+  }
+
+  return containerStats;
+}
+
 
 // ---------------------------------------Volumes--------------------------------------------
 
@@ -193,7 +228,7 @@ async function listvolumes(){
 
 // ---------------------------------------Networks--------------------------------------------
 
-async function createNetwork(networkName, driver) {
+async function createNetwork(networkName, driver="bridge") {
   try {
     // Check if the network already exists
     const network = await docker.getNetwork(networkName).inspect();
@@ -252,4 +287,5 @@ module.exports = {
     listvolumes,
     listnetworks,
     listimages,
+    fetchContainerStats,
 }

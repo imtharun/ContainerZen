@@ -84,16 +84,17 @@ router.post("/startcontainer",async(req,res)=>{
 router.post("/createcontainer",async(req,res)=>{
     const containername = req.body.containername;
     const containerimage = req.body.image;
-    const containernetwork = req.body.network;
-    const hostvolume = req.body.hostvolume;
-    const containervolume = req.body.containervolume;
+    const restartpolicy = req.body.restartpolicy;
+    const containernetwork = req.body.networkname;
+    const networktype = req.body.networktype;
     const hostport = req.body.hostport;
     const containerport = req.body.containerport;
-    const restartpolicy = req.body.restartpolicy;
+    const hostvolume = req.body.hostvolume;
+    const containervolume = req.body.containervolume;
 
     try{
-        const networ = await dockerapi.createNetwork("my-network", "bridge");
-        const container = await dockerapi.createContainer("my-container", "docker/getting-started:latest", "my-network", "", "", 8080, 80, "always");
+        const networ = await dockerapi.createNetwork(containernetwork,networktype);
+        const container = await dockerapi.createContainer(containername,containerimage, containernetwork, hostvolume,containervolume, hostport, containerport,restartpolicy);
         res.sendStatus(200);
     }catch(error){
         console.log(error);
@@ -158,6 +159,17 @@ router.post("/deletecontainer",async(req,res)=>{
         }
     }
     
+});
+
+router.get("/currStats",async(req,res)=>{
+    try{
+        const stats = await dockerapi.fetchContainerStats();
+        res.json(stats);
+    }
+    catch(error){
+        console.log(error);
+        res.send("Unable to fetch container stats");
+    }
 });
 
 
