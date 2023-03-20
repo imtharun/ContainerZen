@@ -1,22 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Card from "./Card";
-// import socket from "./socket";
 
 const Dashboard = () => {
-  // useEffect(() => {
-  //   // socket.on("connect", () => {
-  //   //   console.log("Connected to server");
-  //   // });
-
-  //   // socket.on("disconnect", () => {
-  //   //   console.log("Disconnected from server");
-  //   // });
-
-  //   // return () => {
-  //   //   socket.disconnect();
-  //   // };
-  // }, []);
-
   useEffect(() => {
     const socket = new WebSocket("ws://localhost:6000/");
     console.log(socket);

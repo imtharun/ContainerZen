@@ -5,13 +5,14 @@ import {
   AiOutlineSearch as SearchIcon,
 } from "react-icons/ai";
 import { TbRefresh as RefreshIcon } from "react-icons/tb";
+import axios from "axios";
 
 const Table = ({ headers, rows, setData }) => {
   const searchRef = useRef();
   const [search, setSearch] = useState("");
 
-  const refreshHandler = () => {
-    const data = axios.get("http://localhost:5000/api/listcontainers");
+  const refreshHandler = async () => {
+    const data = await axios.get("http://localhost:5000/api/listcontainers");
     setData(data.data);
   };
 
@@ -55,6 +56,7 @@ const Search = ({ searchRef, search, setSearch }) => {
 };
 
 const T = ({ search, headers, rows }) => {
+  console.log(rows);
   return (
     <div className="flex flex-col">
       <div className="overflow-x-auto sm:-mx-6 lg:-mx-8 no-scrollbar">
@@ -74,7 +76,7 @@ const T = ({ search, headers, rows }) => {
               </thead>
               <tbody>
                 {search === "" ? (
-                  rows.map((row, index) => {
+                  rows?.map((row, index) => {
                     return (
                       <tr
                         key={index + 1}
@@ -103,11 +105,11 @@ const T = ({ search, headers, rows }) => {
                       </tr>
                     );
                   })
-                ) : rows.filter((row) =>
+                ) : rows?.filter((row) =>
                     row.name.toLowerCase().includes(search)
                   ).length !== 0 ? (
                   rows
-                    .filter((row) => row.name.toLowerCase().includes(search))
+                    ?.filter((row) => row.name.toLowerCase().includes(search))
                     .map((row, index) => {
                       return (
                         <tr

@@ -66,7 +66,8 @@ const Row = () => {
               <h1 className="text-lg">{r.Names[0].slice(1)}</h1>
               <p
                 className={`text-sm ml-3 ${
-                  r.State.toLowerCase() === "running"
+                  r.State.toLowerCase() === "running" ||
+                  r.State.toLowerCase() === "created"
                     ? "text-green-500"
                     : "text-red-500"
                 }`}
