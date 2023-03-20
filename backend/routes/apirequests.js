@@ -57,7 +57,7 @@ router.get("/listcontainers", async (req, res) => {
       res.json(containers);
     } catch (err) {
       console.error(err);
-      res.status(500).json({ message: 'Error listing containers'});
+      res.sendStatus(500);
     }
 });
 
@@ -94,7 +94,7 @@ router.post("/createcontainer",async(req,res)=>{
     try{
         const networ = await dockerapi.createNetwork("my-network", "bridge");
         const container = await dockerapi.createContainer("my-container", "docker/getting-started:latest", "my-network", "", "", 8080, 80, "always");
-        res.status(200).json("container created");
+        res.sendStatus(200);
     }catch(error){
         console.log(error);
         res.send(error);
@@ -108,7 +108,7 @@ router.post("/restartcontainer",async(req,res)=>{
     // const containerid = "my-container"
     try{
         const container = await dockerapi.restartcontainer(containerid);
-        rres.sendStatus(200).json("container restarted");
+        rres.sendStatus(200);
     }
     catch(error){
         if(error.reason === 'no such container'){
@@ -162,7 +162,7 @@ router.post("/deletecontainer",async(req,res)=>{
 
 
 //---------------------------------------Volumes--------------------------------------------
-router.post("createvolume",async(req,res)=>{
+router.post("/createvolume",async(req,res)=>{
     // const volumeName = "my-volume"
     const volumeName = req.body.volumeName;
     console.log(volumeName+"create");
