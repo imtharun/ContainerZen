@@ -47,15 +47,10 @@ async function listcontainers(){
 }
 
 async function createContainer(containerName, imageName, networkName, hostvolume,containervolume, hostport,containerport,restartpolicy) {
-  // Check if the image exists locally
   let image = await docker.getImage(imageName).inspect().catch(() => null);
   if (!image) {
     console.log(`Image '${imageName}' not found locally. Pulling from Docker Hub...`);
-
-    // Pull the image from Docker Hub
     const stream = await docker.pull(imageName);
-
-    // Wait for the image to finish downloading
     await new Promise((resolve, reject) => {
       docker.modem.followProgress(stream, (err, res) => {
         if (err) {
@@ -65,7 +60,6 @@ async function createContainer(containerName, imageName, networkName, hostvolume
         }
       });
     });
-    // Get the image again to make sure it was downloaded successfully
     image = await docker.getImage(imageName).inspect();
   }
   const portbindings = {
@@ -141,13 +135,10 @@ async function removeContainer(containerId) {
 }
 
 
-// function to get stats for a container
 async function getContainerStats(containerId) {
   try {
     const container = dockerClient.getContainer(containerId);
     const stats = await container.stats({ stream: false });
-
-    // parse the stats and return the relevant information
     const cpuUsage = stats.cpu_stats.cpu_usage.total_usage;
     const systemCpuUsage = stats.cpu_stats.system_cpu_usage;
     const cpuPercent = ((cpuUsage / systemCpuUsage) * 100).toFixed(2);
@@ -171,29 +162,18 @@ async function getContainerStats(containerId) {
 }
 
 async function fetchContainerStats() {
-  // get all running containers
   const containers = await docker.listContainers();
-  
-  // array to hold container stats
   const containerStats = [];
 
-  // loop through all containers
   for (const container of containers) {
-    // get container stats
     const stats = await docker.getContainer(container.Id).stats({ stream: false });
 
-    // extract relevant stats (CPU usage and memory usage)
     const cpuUsage = stats.cpu_stats.cpu_usage.total_usage;
     const systemCpuUsage = stats.cpu_stats.system_cpu_usage;
     const memoryUsage = stats.memory_stats.usage;
 
-    // calculate CPU usage as a percentage
     const cpuPercent = ((cpuUsage / systemCpuUsage) * 100).toFixed(2);
-
-    // convert memory usage to MB
     const memoryUsageMB = (memoryUsage / 1024 / 1024).toFixed(2);
-
-    // add container stats to array
     containerStats.push({
       id: container.Id,
       name: container.Names[0],
@@ -230,12 +210,10 @@ async function listvolumes(){
 
 async function createNetwork(networkName, driver="bridge") {
   try {
-    // Check if the network already exists
     const network = await docker.getNetwork(networkName).inspect();
     console.log(`Network ${networkName} already exists`);
     return network;
   } catch (error) {
-    // Create a new network if it doesn't exist
     console.log(`Creating network ${networkName}`);
     const networkOptions = {
       Name: networkName,

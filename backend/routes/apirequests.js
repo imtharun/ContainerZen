@@ -15,7 +15,6 @@ const dockerapi = require("./docker/dockerapi")
 router.post("/createimage",async(req,res)=>{
     const image = req.body.image;
     console.log(image+"create");
-    // const image = "nginx:latest"
     try{
         img = await dockerapi.createimage(image)
         console.log(img)
@@ -106,7 +105,6 @@ router.post("/createcontainer",async(req,res)=>{
 router.post("/restartcontainer",async(req,res)=>{
     const containerid = req.body.containerId;
     console.log(containerid+"restart");
-    // const containerid = "my-container"
     try{
         const container = await dockerapi.restartcontainer(containerid);
         res.sendStatus(200);
@@ -122,7 +120,6 @@ router.post("/restartcontainer",async(req,res)=>{
 })
 
 router.post("/stopcontainer",async(req,res)=>{
-    // const containerid = "my-container"
     const containerid = req.body.containerId;
     console.log(containerid+"stop");
 
@@ -175,7 +172,6 @@ router.get("/currStats",async(req,res)=>{
 
 //---------------------------------------Volumes--------------------------------------------
 router.post("/createvolume",async(req,res)=>{
-    // const volumeName = "my-volume"
     const volumeName = req.body.volumeName;
     console.log(volumeName+"create");
     try{
@@ -188,7 +184,6 @@ router.post("/createvolume",async(req,res)=>{
 });
 
 router.post("/deletevolume",async(req,res)=>{
-    // const volumeName = "my-volume"
     const volumeName = req.body.volumeName;
     console.log(volumeName+"delete");
     try{
