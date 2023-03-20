@@ -34,7 +34,7 @@ const Application = ({ data: initialData }) => {
         <Table
           headers={["Id", "Name", "Status", "Image", "Ports", "Created At"]}
           rows={data}
-          setdata={setData}
+          setData={setData}
         />
       </main>
     </>

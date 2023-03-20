@@ -15,8 +15,8 @@ const Networking = () => {
         <div className="my-2 flex border-b border-b-gray-200 bg-transparent p-1">
           <input
             onChange={handleChange}
-            value={userData["network"] || ""}
-            name="network"
+            value={userData["networkname"] || ""}
+            name="networkname"
             placeholder="Network"
             className="p-1 px-2 bg-transparent appearance-none outline-none w-full text-light"
           />
@@ -26,8 +26,8 @@ const Networking = () => {
         <div className="my-2 flex border-b border-b-gray-200 bg-transparent p-1">
           <input
             onChange={handleChange}
-            value={userData["networkMode"] || ""}
-            name="networkMode"
+            value={userData["networktype"] || ""}
+            name="networktype"
             placeholder="Network Mode"
             type="text"
             className="p-1 px-2 appearance-none outline-none w-full text-light bg-transparent"
@@ -39,8 +39,8 @@ const Networking = () => {
           <div className="my-2 flex border-b border-b-gray-200 bg-transparent p-1">
             <input
               onChange={handleChange}
-              value={userData["hostPort"] || ""}
-              name="hostPort"
+              value={userData["hostport"] || ""}
+              name="hostport"
               placeholder="Host Port"
               type="text"
               className="p-1 px-2 appearance-none outline-none w-full text-light bg-transparent"
@@ -52,8 +52,8 @@ const Networking = () => {
           <div className="my-2 flex border-b border-b-gray-200 bg-transparent p-1">
             <input
               onChange={handleChange}
-              value={userData["containerPort"] || ""}
-              name="containerPort"
+              value={userData["containerport"] || ""}
+              name="containerport"
               placeholder="Container Port"
               type="text"
               className="p-1 px-2 appearance-none outline-none w-full text-light bg-transparent"

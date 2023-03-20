@@ -15,8 +15,8 @@ const General = () => {
         <div className="my-2 flex border-b border-b-gray-200 bg-transparent p-1">
           <input
             onChange={handleChange}
-            value={userData["name"] || ""}
-            name="name"
+            value={userData["containername"] || ""}
+            name="containername"
             placeholder="Name"
             className="bg-transparent w-full appearance-none p-1 px-2 text-light outline-none"
           />
@@ -38,8 +38,8 @@ const General = () => {
         <div className="my-2 flex border-b border-b-gray-200 bg-transparent p-1">
           <input
             onChange={handleChange}
-            value={userData["restartPolicy"]}
-            name="Restart policy"
+            value={userData["restartpolicy"]}
+            name="restartpolicy"
             placeholder="Restart policy"
             type="text"
             className="bg-transparent w-full appearance-none p-1 px-2 text-light outline-none"

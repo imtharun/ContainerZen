@@ -6,11 +6,14 @@ import {
 } from "react-icons/ai";
 import { TbRefresh as RefreshIcon } from "react-icons/tb";
 
-const Table = ({ headers, rows }) => {
+const Table = ({ headers, rows, setData }) => {
   const searchRef = useRef();
   const [search, setSearch] = useState("");
 
-  console.log();
+  const refreshHandler = () => {
+    const data = axios.get("http://localhost:5000/api/listcontainers");
+    setData(data.data);
+  };
 
   return (
     <div className="h-[90vh] bg-dark text-light p-2 sm:ml-[3rem] sm:px-[5rem] pt-8 pb-4 overflow-y-scroll no-scrollbar">
@@ -22,7 +25,7 @@ const Table = ({ headers, rows }) => {
               <PlusIcon className="w-5 h-5" />
             </Link>
           </button>
-          <button className="ml-2">
+          <button onClick={refreshHandler} className="ml-2">
             <RefreshIcon className="w-5 h-5" />
           </button>
         </div>

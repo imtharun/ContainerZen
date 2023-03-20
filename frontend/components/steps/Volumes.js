@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { useStepperContext } from "@/contexts/StepperContext";
+import axios from "axios";
 
 const Volumes = () => {
   const { userData, setUserData } = useStepperContext();
@@ -11,8 +12,47 @@ const Volumes = () => {
     setUserData({ ...userData, [name]: value });
   };
 
-  const clickHandler = () => {
-    console.log(userData);
+  const clickHandler = async () => {
+    const {
+      containername,
+      image,
+      restartpolicy,
+      networkname,
+      networktype,
+      hostport,
+      containerport,
+      hostvolume,
+      containervolume,
+    } = userData;
+
+    console.log({
+      containername,
+      image,
+      restartpolicy,
+      networkname,
+      networktype,
+      hostport,
+      containerport,
+      hostvolume,
+      containervolume,
+    });
+
+    const data = await axios.post("http://localhost:5000/api/createcontainer", {
+      containername,
+      image,
+      restartpolicy,
+      networkname,
+      networktype,
+      hostport,
+      containerport,
+      hostvolume,
+      containervolume,
+    });
+    if (data.status === 200) {
+      console.log("created");
+    } else {
+      console.log("error occurred");
+    }
   };
 
   return (
@@ -43,8 +83,8 @@ const Volumes = () => {
           <div className="my-2 flex border-b border-b-gray-200 bg-transparent p-1">
             <input
               onChange={handleChange}
-              value={userData["host"] || ""}
-              name="host"
+              value={userData["hostvolume"] || ""}
+              name="hostvolume"
               placeholder="Host"
               className="p-1 px-2 bg-transparent appearance-none outline-none w-full text-light"
             />
@@ -54,8 +94,8 @@ const Volumes = () => {
           <div className="my-2 flex border-b border-b-gray-200 bg-transparent p-1">
             <input
               onChange={handleChange}
-              value={userData["container"] || ""}
-              name="container"
+              value={userData["containervolume"] || ""}
+              name="containervolume"
               placeholder="Container"
               type="text"
               className="p-1 px-2 appearance-none outline-none w-full text-light bg-transparent"
