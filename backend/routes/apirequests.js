@@ -108,7 +108,7 @@ router.post("/restartcontainer",async(req,res)=>{
     // const containerid = "my-container"
     try{
         const container = await dockerapi.restartcontainer(containerid);
-        rres.sendStatus(200);
+        res.sendStatus(200);
     }
     catch(error){
         if(error.reason === 'no such container'){
@@ -127,7 +127,7 @@ router.post("/stopcontainer",async(req,res)=>{
 
     try{
         const container = await dockerapi.stopcontainer(containerid);
-        res.sendStatus(200).json("container stopped");
+        res.sendStatus(200);
     }
     catch(error){
         if(error.reason === 'no such container'){
@@ -147,7 +147,7 @@ router.post("/deletecontainer",async(req,res)=>{
 
     try{
         const container = await dockerapi.removeContainer(containerid);
-        res.sendStatus(200).json("container deleted");
+        res.sendStatus(200);
     }
     catch(error){
         if(error.reason === 'no such container'){
@@ -168,7 +168,7 @@ router.post("/createvolume",async(req,res)=>{
     console.log(volumeName+"create");
     try{
         await dockerapi.createVolume(volumeName);
-        res.sendStatus(200).json("volume created");
+        res.sendStatus(200);
     }
     catch(error){
         res.send("Unable to create volume");
@@ -181,7 +181,7 @@ router.post("/deletevolume",async(req,res)=>{
     console.log(volumeName+"delete");
     try{
         await dockerapi.deleteVolume(volumeName);
-        res.sendStatus(200).json("volume deleted");
+        res.sendStatus(200);
     }
     catch(error){
         res.send("Unable to delete volume");
