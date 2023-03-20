@@ -2,7 +2,7 @@ import Head from "next/head";
 import axios from "axios";
 import Dashboard from "@/components/Dashboard";
 
-const Home = () => {
+const Home = ({ data }) => {
   return (
     <>
       <Head>
@@ -28,15 +28,16 @@ const Home = () => {
         />
       </Head>
       <main>
-        <Dashboard />
+        <Dashboard data={data} />
       </main>
     </>
   );
 };
 
 export const getServerSideProps = async (ctx) => {
+  const res = await axios.get("http://localhost:5000/api/currStats");
   return {
-    props: { heading: "Home" },
+    props: { heading: "Home", data: res.data },
   };
 };
 

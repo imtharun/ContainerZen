@@ -1,17 +1,18 @@
 import React from "react";
 
 const Card = ({ name, cpuUsage, memUsage }) => {
+  console.log(name, cpuUsage, memUsage);
   return (
     <div className="bg-dark w-[15rem] p-4 m-2 rounded-md">
       <h1 className="text-lg text-medium">
         {name.charAt(0).toUpperCase() + name.slice(1)}
       </h1>
       <div className="text-sm flex flex-col my-1">
-        CPU Usage {cpuUsage + "%"}
+        CPU Usage {(cpuUsage === "NaN" ? 0.0 : cpuUsage) + "%"}
         <Progress usage={cpuUsage} />
       </div>
       <div className="text-sm flex flex-col">
-        MEM Usage {memUsage + "%"}
+        MEM Usage {(memUsage === "NaN" ? 0.0 : memUsage) + "%"}
         <Progress usage={memUsage} />
       </div>
     </div>
