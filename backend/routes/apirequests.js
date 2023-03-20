@@ -13,8 +13,9 @@ const dockerapi = require("./docker/dockerapi")
 //---------------------------------------Images--------------------------------------------
 //to pull an image from dockerhub
 router.post("/createimage",async(req,res)=>{
-    // const image = req.body.image;
-    const image = "ubuntu:latest"
+    const image = req.body.image;
+    console.log(image+"create");
+    // const image = "ubuntu:latest"
     try{
         dockerapi.createimage(docker,image)
         res.send("image created")
@@ -25,8 +26,9 @@ router.post("/createimage",async(req,res)=>{
 });
 
 router.post("/deleteimage",async(req,res)=>{
-    // const image = req.body.image;
-    const image = "ubuntu:latest"
+    const image = req.body.image;
+    // const image = "ubuntu:latest"
+    console.log(image+"delete");
     try{
         dockerapi.deleteimage(image)
         res.send("image deleted")
@@ -119,7 +121,7 @@ router.post("/restartcontainer",async(req,res)=>{
 router.post("/stopcontainer",async(req,res)=>{
     // const containerid = "my-container"
     const containerid = req.body.containerId;
-    onsole.log(containerid+"stop");
+    console.log(containerid+"stop");
 
     try{
         const container = await dockerapi.stopcontainer(containerid);
@@ -139,7 +141,7 @@ router.post("/stopcontainer",async(req,res)=>{
 router.post("/deletecontainer",async(req,res)=>{
     // const containerid = "my-container"
     const containerid =req.body.containerId;
-    onsole.log(containerid+"delete");
+    console.log(containerid+"delete");
 
     try{
         const container = await dockerapi.removeContainer(containerid);
@@ -159,7 +161,9 @@ router.post("/deletecontainer",async(req,res)=>{
 
 //---------------------------------------Volumes--------------------------------------------
 router.post("createvolume",async(req,res)=>{
-    const volumeName = "my-volume"
+    // const volumeName = "my-volume"
+    const volumeName = req.body.volumeName;
+    console.log(volumeName+"create");
     try{
         await dockerapi.createVolume(volumeName);
         res.json("created volume");
@@ -170,7 +174,9 @@ router.post("createvolume",async(req,res)=>{
 });
 
 router.post("/deletevolume",async(req,res)=>{
-    const volumeName = "my-volume"
+    // const volumeName = "my-volume"
+    const volumeName = req.body.volumeName;
+    console.log(volumeName+"delete");
     try{
         await dockerapi.deleteVolume(volumeName);
         res.json("deleted volume");
