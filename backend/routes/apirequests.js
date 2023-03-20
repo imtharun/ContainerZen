@@ -12,7 +12,7 @@ const dockerapi = require("./docker/dockerapi")
 
 //---------------------------------------Images--------------------------------------------
 //to pull an image from dockerhub
-router.get("/createimage",async(req,res)=>{
+router.post("/createimage",async(req,res)=>{
     const image = req.body.image;
     console.log(image+"create");
     // const image = "nginx:latest"
