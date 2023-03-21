@@ -32,7 +32,8 @@ router.post("/deleteimage",async(req,res)=>{
     console.log(image+"delete");
     try{
         dockerapi.deleteimage(image)
-        res.sendStatus(200);
+        img = dockerapi.listimages();
+        res.send(img);
     }catch(error){
         res.send("Unable to fetch container image");
     }

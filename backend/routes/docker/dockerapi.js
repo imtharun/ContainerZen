@@ -16,10 +16,16 @@ async function createimage(image){
     });
 }
 
-async function deleteimage(image){
-    const delimage = await docker.getImage(image);
-    await delimage.remove();
-    return delimage;
+async function deleteimage(images){
+    for (const imageName of images) {
+      try {
+        const image = docker.getImage(imageName);
+        await image.remove({ force: true });
+        console.log(`Deleted Docker image: ${imageName}`);
+      } catch (error) {
+        console.error(`Error deleting Docker image ${imageName}: ${error.message}`);
+      }
+    }
 }
 
 async function listimages(){
