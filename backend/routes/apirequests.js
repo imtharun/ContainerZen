@@ -23,7 +23,6 @@ router.post("/createimage",async(req,res)=>{
         console.log(error);
         res.send(error);
     }
-    
 });
 
 router.post("/deleteimage",async(req,res)=>{
@@ -31,7 +30,7 @@ router.post("/deleteimage",async(req,res)=>{
     // const image = "ubuntu:latest"
     console.log(image+"delete");
     try{
-        dockerapi.deleteimage(image)
+        await dockerapi.deleteimage(image)
         img = await dockerapi.listimages();
         res.send(img);
     }catch(error){
