@@ -32,7 +32,7 @@ router.post("/deleteimage",async(req,res)=>{
     console.log(image+"delete");
     try{
         dockerapi.deleteimage(image)
-        img = dockerapi.listimages();
+        img = await dockerapi.listimages();
         res.send(img);
     }catch(error){
         res.send("Unable to fetch container image");
@@ -189,7 +189,8 @@ router.post("/deletevolume",async(req,res)=>{
     console.log(volumeName+"delete");
     try{
         await dockerapi.deleteVolume(volumeName);
-        res.sendStatus(200);
+        vol = await dockerapi.listvolumes();
+        res.send(vol);
     }
     catch(error){
         res.send("Unable to delete volume");

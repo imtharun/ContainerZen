@@ -202,8 +202,17 @@ async function createVolume(volumeName) {
     return volume;
 }
 
-async function deleteVolume(volumeName) {
-    await docker.getVolume(volumeName).remove();
+async function deleteVolume(volumeNames) {
+    // await docker.getVolume(volumeName).remove();
+    for (const volumeName of volumeNames) {
+      const volume = docker.getVolume(volumeName);
+      try {
+        await volume.remove();
+        console.log(`Volume ${volumeName} deleted.`);
+      } catch (err) {
+        console.error(`Error deleting volume ${volumeName}: ${err.message}`);
+      }
+    }
 }
 
 async function listvolumes(){
