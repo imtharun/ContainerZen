@@ -16,9 +16,9 @@ router.post("/createimage",async(req,res)=>{
     const image = req.body.image;
     console.log(image+"create");
     try{
-        img = await dockerapi.createimage(image)
-        console.log(img)
-        res.sendStatus(200);
+        await dockerapi.createimage(image)
+        img = await dockerapi.listimages();
+        res.send(img);
     }catch(error){
         console.log(error);
         res.send(error);
@@ -94,7 +94,8 @@ router.post("/createcontainer",async(req,res)=>{
     try{
         const networ = await dockerapi.createNetwork(containernetwork,networktype);
         const container = await dockerapi.createContainer(containername,containerimage, containernetwork, hostvolume,containervolume, hostport, containerport,restartpolicy);
-        res.sendStatus(200);
+        cnt = await dockerapi.listcontainers();
+        res.send(cnt);
     }catch(error){
         console.log(error);
         res.send(error);
@@ -145,7 +146,8 @@ router.post("/deletecontainer",async(req,res)=>{
 
     try{
         const container = await dockerapi.removeContainer(containerid);
-        res.sendStatus(200);
+        cnt = await dockerapi.listcontainers();
+        res.send(cnt);
     }
     catch(error){
         if(error.reason === 'no such container'){
@@ -176,7 +178,8 @@ router.post("/createvolume",async(req,res)=>{
     console.log(volumeName+"create");
     try{
         await dockerapi.createVolume(volumeName);
-        res.sendStatus(200);
+        vol = await dockerapi.listvolumes();
+        res.send(vol);
     }
     catch(error){
         res.send("Unable to create volume");
@@ -213,7 +216,8 @@ router.post("/createnetwork",async(req,res)=>{
     const networkDriver = "bridge"
     try{
         await dockerapi.createNetwork(networkName, networkDriver);
-        res.json("created network");
+        ntw = await dockerapi.listnetworks();
+        res.sendFile(ntw);
     }
     catch(error){
         res.send("Unable to create network");
@@ -224,7 +228,8 @@ router.post("/deletenetwork",async(req,res)=>{
     const networkName = "my-network"
     try{
         await dockerapi.deleteNetwork(networkName);
-        res.json("deleted network");
+        ntw = await dockerapi.listnetworks();
+        res.sendFile(ntw);
     }
     catch(error){
         res.send("Unable to delete network");
