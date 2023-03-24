@@ -187,21 +187,22 @@ async function getContainerStats(containerId) {
 async function fetchContainerStats() {
   const containers = await docker.listContainers();
   const containerStats = [];
-
   for (const container of containers) {
     const stats = await docker.getContainer(container.Id).stats({ stream: false });
-
     const cpuUsage = stats.cpu_stats.cpu_usage.total_usage;
     const systemCpuUsage = stats.cpu_stats.system_cpu_usage;
-    const memoryUsage = stats.memory_stats.usage;
-
     const cpuPercent = ((cpuUsage / systemCpuUsage) * 100).toFixed(2);
+    const memoryUsage = stats.memory_stats.usage;
+    const memoryLimit = stats.memory_stats.limit;
+    const memoryPercent = ((memoryUsage / memoryLimit) * 100).toFixed(2);
     const memoryUsageMB = (memoryUsage / 1024 / 1024).toFixed(2);
     containerStats.push({
       id: container.Id,
       name: container.Names[0],
       cpuUsage: cpuPercent,
-      memoryUsage: memoryUsageMB
+      memoryUsage: memoryUsageMB,
+      totalMemory: memoryLimit/1024/1024,
+      memoryPercent: memoryPercent,
     });
   }
 
