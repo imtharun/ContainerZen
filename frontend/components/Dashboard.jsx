@@ -6,14 +6,14 @@ const Dashboard = ({ data: initialData }) => {
   const [data, setData] = useState(initialData);
 
   const getContainers = async () => {
-    console.log("chaginh");
     const res = await axios.get("http://localhost:5000/api/currStats");
-    console.log(res.data);
     setData(res.data);
   };
 
   useEffect(() => {
+    // setInterval(() => {
     getContainers();
+    // }, 1000);
   }, []);
 
   return (
@@ -21,17 +21,20 @@ const Dashboard = ({ data: initialData }) => {
       <h1 className="bg-light text-dark p-2 rounded-t-md font-medium text-lg">
         Dashboard
       </h1>
-      <div className="bg-mid-dark flex flex-wrap justify-center rounded-b-md p-4 overflow-y-scroll no-scrollbar">
-        {data.map((ele) => {
-          console.log(ele);
-          return (
-            <Card
-              name={ele.name}
-              cpuUsage={ele.cpuUsage}
-              memUsage={ele.memoryUsage}
-            />
-          );
-        })}
+      <div className="bg-mid-dark flex flex-wrap justify-center lg:justify-start rounded-b-md p-4 overflow-y-scroll no-scrollbar">
+        {data &&
+          data.map((ele, index) => {
+            return (
+              <Card
+                key={index + 1}
+                name={ele.name.slice(1)}
+                cpuUsage={ele.cpuUsage}
+                memPercent={ele.memoryPercent}
+                memUsage={ele.memoryUsage}
+                totMem={ele.totalMemory}
+              />
+            );
+          })}
       </div>
     </div>
   );

@@ -1,15 +1,53 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState } from "react";
 import Head from "next/head";
-import {
-  AiOutlinePlusCircle as PlusIcon,
-  AiOutlineSearch as SearchIcon,
-} from "react-icons/ai";
-import { VscRefresh as RefreshIcon } from "react-icons/vsc";
+import ContainerForImageAndVolume from "@/components/ContainerForImageAndVolume";
 import axios from "axios";
 
 const Images = ({ data: initialData }) => {
+  const type = "image";
   const [data, setData] = useState(initialData);
-  console.log(data);
+  const [isChecked, setIsChecked] = useState(new Set());
+
+  const deleteObj = async () => {
+    const data = await axios.post(`http://localhost:5000/api/delete${type}`, {
+      image: Array.from(isChecked),
+    });
+
+    if (data.status === 200) {
+      const initialData = [];
+      for (var ele of data.data) {
+        const obj = {
+          col1: ele.RepoTags[0],
+          col2: ele.Id,
+          col3: ele.Created,
+        };
+
+        initialData.push(obj);
+      }
+
+      setData(initialData);
+      setIsChecked(new Set());
+    }
+  };
+
+  const refreshHandler = async () => {
+    const data = await axios.get(`http://localhost:5000/api/list${type}s`);
+
+    if (data.status === 200) {
+      const initialData = [];
+      for (var ele of data.data) {
+        const obj = {
+          col1: ele.RepoTags[0],
+          col2: ele.Id,
+          col3: ele.Created,
+        };
+
+        initialData.push(obj);
+      }
+
+      setData(initialData);
+    }
+  };
 
   return (
     <>
@@ -36,227 +74,39 @@ const Images = ({ data: initialData }) => {
         />
       </Head>
       <main>
-        <Table
-          headers={["Tag", "Id", "Created"]}
+        <ContainerForImageAndVolume
+          type={type}
+          headers={["Select", "Tag", "Id", "Created"]}
           rows={data}
           setData={setData}
+          deleteObj={deleteObj}
+          isChecked={isChecked}
+          setIsChecked={setIsChecked}
+          refreshHandler={refreshHandler}
         />
       </main>
     </>
   );
 };
 
-const Table = ({ headers, rows, setData }) => {
-  const searchRef = useRef();
-  const [search, setSearch] = useState("");
-  const [showModal, setShowModal] = useState(false);
-
-  const refreshHandler = async () => {
-    const data = await axios.get("http://localhost:5000/api/listimages");
-    setData(data.data);
-  };
-
-  return (
-    <div className="h-[90vh] bg-dark text-light p-2 sm:ml-[3rem] sm:px-[5rem] pt-8 pb-4 overflow-y-scroll no-scrollbar">
-      <div className="bg-light flex justify-between text-dark p-3 rounded-t-md flex-col sm:flex-row items-center">
-        <div className="flex items-center">
-          <h1 className="font-medium text-base text-center">Images</h1>
-          <button
-            onClick={() => setShowModal(!showModal)}
-            type="button"
-            className="pl-2"
-          >
-            <PlusIcon className="w-5 h-5" />
-          </button>
-          <Modal setShowModal={setShowModal} showModal={showModal} />
-          <button onClick={refreshHandler} className="ml-2">
-            <RefreshIcon className="w-5 h-5" />
-          </button>
-        </div>
-        <Search search={search} setSearch={setSearch} searchRef={searchRef} />
-      </div>
-      <div className="bg-mid-dark rounded-b-md p-4 overflow-y-scroll no-scrollbar">
-        <T headers={headers} search={search} rows={rows} />
-      </div>
-    </div>
-  );
-};
-
-const Search = ({ searchRef, search, setSearch }) => {
-  return (
-    <div className="border-b-[1.5px] text-dark border-b-mid-dark w-[15rem] text-sm flex justify-between p-1 items-center">
-      <input
-        placeholder="Search with Tag"
-        className="bg-light outline-none"
-        type="text"
-        value={search}
-        ref={searchRef}
-        onChange={() => setSearch(searchRef.current.value)}
-      />
-      <SearchIcon className="h-4 w-4" />
-    </div>
-  );
-};
-
-const T = ({ search, headers, rows }) => {
-  return (
-    <div className="flex flex-col">
-      <div className="overflow-x-auto sm:-mx-6 lg:-mx-8 no-scrollbar">
-        <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
-          <div className="overflow-hidden">
-            <table className="min-w-full text-left text-sm font-light">
-              <thead className="border-b font-medium dark:border-neutral-500">
-                <tr>
-                  {headers.map((ele, index) => {
-                    return (
-                      <th key={index + 1} scope="col" className="px-6 py-4">
-                        {ele}
-                      </th>
-                    );
-                  })}
-                </tr>
-              </thead>
-              <tbody>
-                {search === "" ? (
-                  rows.map((row, index) => {
-                    return (
-                      <tr
-                        key={index + 1}
-                        className="border-b dark:border-neutral-500"
-                      >
-                        <td className="whitespace-nowrap px-6 py-4">
-                          {row.RepoTags[0]}
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4">
-                          {row.Id}
-                        </td>
-                        <td className="whitespace-nowrap px-6 py-4">
-                          {"" + new Date(+row.Created * 1000).toDateString()}
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : rows.filter((row) => row.RepoTags[0]?.includes(search))
-                    .length !== 0 ? (
-                  rows
-                    .filter((row) => row.RepoTags[0]?.includes(search))
-                    .map((row, index) => {
-                      return (
-                        <tr
-                          key={index + 1}
-                          className="border-b dark:border-neutral-500"
-                        >
-                          <td className="whitespace-nowrap px-6 py-4">
-                            {row.RepoTags[0]}
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4">
-                            {row.Id}
-                          </td>
-                          <td className="whitespace-nowrap px-6 py-4">
-                            {row.Labels["org.opencontainers.image.created"]}
-                          </td>
-                        </tr>
-                      );
-                    })
-                ) : (
-                  <tr>
-                    <td className="text-center p-4" colSpan="6">
-                      No results found
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const Modal = ({ showModal, setShowModal }) => {
-  const imageRef = useRef();
-  const [image, setImage] = useState("");
-
-  const pullImage = async () => {
-    const data = await axios.post("http://localhost:5000/api/createimage", {
-      image,
-    });
-    if (data.status === 200) {
-      setImage("");
-      console.log("image created");
-    } else {
-      console.log("error occurred");
-    }
-  };
-
-  const createHandler = () => {
-    pullImage();
-  };
-
-  return (
-    <>
-      {showModal ? (
-        <>
-          <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-            <div className="relative w-auto my-6 mx-auto max-w-3xl">
-              {/*content*/}
-              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-light outline-none focus:outline-none">
-                {/*header*/}
-                <div className="flex items-start justify-between p-5 border-b border-solid border-dark rounded-t">
-                  <h3 className="text-xl text-dark">Create Image</h3>
-                  <button
-                    className="text-dark"
-                    onClick={() => setShowModal(false)}
-                  >
-                    <span className="bg-transparent opacity-5 h-6 w-6 text-2xl block text-dark outline-none focus:outline-none">
-                      ×
-                    </span>
-                  </button>
-                </div>
-                {/*body*/}
-                <div className="relative p-6 flex-auto">
-                  <input
-                    ref={imageRef}
-                    onChange={() => setImage(imageRef.current.value)}
-                    value={image}
-                    placeholder="Image"
-                    className="bg-transparent outline-none border-b border-b-dark p-2"
-                  />
-                </div>
-                {/*footer*/}
-                <div className="flex items-center justify-end p-6 border-t border-solid border-dark rounded-b">
-                  <button
-                    className="inline-block rounded bg-mid-dark text-light  py-2 px-4 text-lg font-medium hover:opacity-80"
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="inline-block rounded bg-mid-dark text-light py-2 px-4 text-lg font-medium hover:opacity-80 ml-8"
-                    onClick={() => {
-                      setShowModal(false);
-                      createHandler();
-                    }}
-                  >
-                    Pull
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="opacity-50 fixed inset-0 z-40 bg-black"></div>
-        </>
-      ) : null}
-    </>
-  );
-};
-
 export const getServerSideProps = async (ctx) => {
   const data = await axios.get("http://localhost:5000/api/listimages");
+
+  const initialData = [];
+  if (data.status === 200) {
+    for (var ele of data.data) {
+      const obj = {
+        col1: ele.RepoTags[0],
+        col2: ele.Id,
+        col3: ele.Created,
+      };
+
+      initialData.push(obj);
+    }
+  }
+
   return {
-    props: { heading: "Images", data: data.data },
+    props: { heading: "Images", data: initialData },
   };
 };
 

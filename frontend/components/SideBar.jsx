@@ -22,10 +22,6 @@ const SideBar = () => {
       name: "Containers",
     },
     {
-      icon: <ApplicationIcon className="w-[1.4rem] h-6" />,
-      name: "Applications",
-    },
-    {
       icon: <ImagesIcon className="w-[1.4rem] h-6" />,
       name: "Images",
     },
@@ -42,7 +38,7 @@ const SideBar = () => {
 
   return (
     <>
-      <aside className="block sm:hidden absolute bottom-0 bg-mid-dark text-light w-full p-3 z-50">
+      <aside className="block sm:hidden absolute bottom-0 bg-mid-dark text-light w-full p-3 z-40">
         <div className={`flex justify-center overflow-x-scroll no-scrollbar  `}>
           {contents.map((ele, index) => {
             return (
@@ -64,7 +60,7 @@ const SideBar = () => {
         onMouseLeave={() => {
           setIsVisible(false);
         }}
-        className={`hidden sm:block absolute bg-mid-dark text-light  h-[90vh] p-3 transition-all duration-300 ease-out z-50 ${
+        className={`hidden sm:block absolute bg-mid-dark text-light  h-[90vh] p-3 transition-all duration-300 ease-out z-40 ${
           !isVisible ? "w-[66px]" : "w-[236px]"
         }`}
       >

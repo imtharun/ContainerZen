@@ -3,6 +3,7 @@ import axios from "axios";
 import Dashboard from "@/components/Dashboard";
 
 const Home = ({ data }) => {
+  console.log(data);
   return (
     <>
       <Head>
@@ -35,9 +36,13 @@ const Home = ({ data }) => {
 };
 
 export const getServerSideProps = async (ctx) => {
-  const res = await axios.get("http://localhost:5000/api/currStats");
+  const data = await axios.get("http://localhost:5000/api/currStats");
+
+  if (data.status === 200) {
+  }
+
   return {
-    props: { heading: "Home", data: res.data },
+    props: { heading: "Home", data: data.data },
   };
 };
 

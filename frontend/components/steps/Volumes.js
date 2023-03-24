@@ -2,13 +2,15 @@ import React from "react";
 import Link from "next/link";
 import { useStepperContext } from "@/contexts/StepperContext";
 import axios from "axios";
+import Loading from "../Loading";
 
 const Volumes = () => {
   const { userData, setUserData } = useStepperContext();
 
+  // const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(name + " " + value);
     setUserData({ ...userData, [name]: value });
   };
 
@@ -25,18 +27,6 @@ const Volumes = () => {
       containervolume,
     } = userData;
 
-    console.log({
-      containername,
-      image,
-      restartpolicy,
-      networkname,
-      networktype,
-      hostport,
-      containerport,
-      hostvolume,
-      containervolume,
-    });
-
     const data = await axios.post("http://localhost:5000/api/createcontainer", {
       containername,
       image,
@@ -49,9 +39,7 @@ const Volumes = () => {
       containervolume,
     });
     if (data.status === 200) {
-      console.log("created");
     } else {
-      console.log("error occurred");
     }
   };
 
@@ -113,6 +101,7 @@ const Volumes = () => {
           </Link>
         </div>
       </div>
+      {/* {loading && <Loading loadingName={"Creating"} />} */}
     </div>
   );
 };
