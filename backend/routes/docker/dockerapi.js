@@ -35,17 +35,28 @@ async function listimages(){
 
 
 // ---------------------------------------Containers--------------------------------------------
-async function startcontainer(containerid){
-    const container = await docker.getContainer(containerid);
-    await container.start();
-    return container;
+async function startcontainer(containerids){
+  for (const containername of containerids) {
+    try {
+      const image = docker.getContainer(containername);
+      await image.start();
+    } catch (error) {
+      console.error(`Error starting Docker image ${containername}: ${error.message}`);
+    }
+  }
+    return;
 }
 
-async function stopcontainer(containerid){
-    const container = await docker.getContainer(containerid);
-    await container.stop();
-    return container;
+async function stopcontainer(containerids){
+  for (const containername of containerids) {
+    try {
+      const image = docker.getContainer(containername);
+      await image.stop();
+    } catch (error) {
+      console.error(`Error stoping Docker image ${containername}: ${error.message}`);
+    }
 }
+};
 
 async function listcontainers(){
     const containers = await docker.listContainers({ all: true });
@@ -124,20 +135,26 @@ async function createContainer(containerName, imageName, networkName, hostvolume
     
 }
 
-async function restartcontainer(containerid){
-    const container = await docker.getContainer(containerid);
-    await container.restart();
-    return container;
+async function restartcontainer(containerids){
+  for (const containername of containerids) {
+    try {
+      const image = docker.getContainer(containername);
+      await image.restart();
+    } catch (error) {
+      console.error(`Error restarting Docker image ${containername}: ${error.message}`);
+    }
+}
 }
 
 async function removeContainer(containerId) {
-    const container = docker.getContainer(containerId);
-    try{
-      await container.stop();
-    }catch(err){
-      console.log(err);
+  for (const containername of containerids) {
+    try {
+      const image = docker.getContainer(containername);
+      await image.remove();
+    } catch (error) {
+      console.error(`Error removing Docker image ${containername}: ${error.message}`);
     }
-    await container.remove();
+}
 }
 
 

@@ -65,8 +65,9 @@ router.post("/startcontainer",async(req,res)=>{
     const containerid = req.body.containerId;
     console.log(containerid+"start request");
     try{
-        const container = await dockerapi.startcontainer(containerid);
-        res.sendStatus(200);
+        await dockerapi.startcontainer(containerid);
+        cnt = await dockerapi.listcontainers();
+        res.send(cnt);
     }
     catch(error){
         if(error.reason === 'no such container'){
@@ -107,8 +108,9 @@ router.post("/restartcontainer",async(req,res)=>{
     const containerid = req.body.containerId;
     console.log(containerid+"restart");
     try{
-        const container = await dockerapi.restartcontainer(containerid);
-        res.sendStatus(200);
+        await dockerapi.restartcontainer(containerid);
+        cnt = await dockerapi.listcontainers();
+        res.send(cnt);
     }
     catch(error){
         if(error.reason === 'no such container'){
@@ -125,8 +127,9 @@ router.post("/stopcontainer",async(req,res)=>{
     console.log(containerid+"stop");
 
     try{
-        const container = await dockerapi.stopcontainer(containerid);
-        res.sendStatus(200);
+        await dockerapi.stopcontainer(containerid);
+        cnt = await dockerapi.listcontainers();
+        res.send(cnt);
     }
     catch(error){
         if(error.reason === 'no such container'){
@@ -140,12 +143,11 @@ router.post("/stopcontainer",async(req,res)=>{
 });
 
 router.post("/deletecontainer",async(req,res)=>{
-    // const containerid = "my-container"
     const containerid =req.body.containerId;
     console.log(containerid+"delete");
 
     try{
-        const container = await dockerapi.removeContainer(containerid);
+        await dockerapi.removeContainer(containerid);
         cnt = await dockerapi.listcontainers();
         res.send(cnt);
     }
