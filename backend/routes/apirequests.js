@@ -26,14 +26,13 @@ router.post("/createimage",async(req,res)=>{
 
 router.post("/deleteimage",async(req,res)=>{
     const image = req.body.image;
-    // const image = "ubuntu:latest"
     try{
         await dockerapi.deleteimage(image)
         img = await dockerapi.listimages();
         res.send(img);
     }catch(error){
         res.status(503);
-        res.send("Unable to fetch container image");
+        res.send(error);
     }
 });
 
@@ -43,7 +42,7 @@ router.get("/listimages",async(req,res)=>{
         res.json(images);
     }catch(error){
         res.status(503);
-        res.send("Unable to fetch container image");
+        res.send(error);
     }
 });
 
@@ -69,11 +68,12 @@ router.post("/startcontainer",async(req,res)=>{
     }
     catch(error){
         if(error.reason === 'no such container'){
-        res.send("container not found");
+            res.status(404);
+            res.send("container not found");
         }
         else{
             res.status(503);
-            res.send("Unknown error");
+            res.send(error);
         }
     }
 });
@@ -112,11 +112,12 @@ router.post("/restartcontainer",async(req,res)=>{
     }
     catch(error){
         if(error.reason === 'no such container'){
-        res.send("container not found");
+            res.status(404);
+            res.send("container not found");
         }
         else{
             res.status(503);
-            res.send("Unknown error");
+            res.send(error);
         }
     }
 })
@@ -130,11 +131,12 @@ router.post("/stopcontainer",async(req,res)=>{
     }
     catch(error){
         if(error.reason === 'no such container'){
-        res.send("container not found");
+            res.status(404);
+            res.send("container not found");
         }
         else{
             res.status(503);
-            res.send("Unable to stop container");
+            res.send(error);
         }
     }
     
@@ -149,7 +151,8 @@ router.post("/deletecontainer",async(req,res)=>{
     }
     catch(error){
         if(error.reason === 'no such container'){
-        res.send("container not found");
+            res.status(404);
+            res.send("container not found");
         }
         else{
             res.status(503);
@@ -166,7 +169,7 @@ router.get("/currStats",async(req,res)=>{
     }
     catch(error){
         res.status(503);
-        res.send("Unable to fetch container stats");
+        res.send(error);
     }
 });
 
@@ -181,7 +184,7 @@ router.post("/createvolume",async(req,res)=>{
     }
     catch(error){
         res.status(503);
-        res.send("Unable to create volume");
+        res.send(error);
     }
 });
 
@@ -194,7 +197,7 @@ router.post("/deletevolume",async(req,res)=>{
     }
     catch(error){
         res.status(503);
-        res.send("Unable to delete volume");
+        res.send(error);
     }
 });
 
@@ -205,7 +208,7 @@ router.get("/listvolumes",async(req,res)=>{
     }
     catch(error){
         res.status(503);
-        res.send("Unable to list volumes");
+        res.send(error);
     }
 });
 
@@ -221,7 +224,7 @@ router.post("/createnetwork",async(req,res)=>{
     }
     catch(error){
         res.status(503);
-        res.send("Unable to create network");
+        res.send(error);
     }
 });
 
@@ -230,11 +233,11 @@ router.post("/deletenetwork",async(req,res)=>{
     try{
         await dockerapi.deleteNetwork(networkName);
         ntw = await dockerapi.listnetworks();
-        res.sendFile(ntw);
+        res.send(ntw);
     }
     catch(error){
         res.status(503);
-        res.send("Unable to delete network");
+        res.send(error);
     }
 });
 

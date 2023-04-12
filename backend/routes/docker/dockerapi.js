@@ -15,8 +15,7 @@ async function createimage(image){
       });
     });
   } catch (error) {
-    res.status(503);
-    res.send("Unable to create image");
+    throw error;
   }
     
 }
@@ -27,8 +26,7 @@ async function deleteimage(images){
         const image = docker.getImage(imageName);
         await image.remove({ force: true });
       } catch (error) {
-        res.status(503);
-        res.send("Unable to stop container");
+        return error;
       }
     }
 }
@@ -46,8 +44,7 @@ async function startcontainer(containerids){
       const image = docker.getContainer(containername);
       await image.start();
     } catch (error) {
-      res.status(503);
-      res.send("Unable to start container");
+      throw error;
     }
   }
     return;
@@ -59,8 +56,7 @@ async function stopcontainer(containerids){
       const image = docker.getContainer(containername);
       await image.stop();
     } catch (error) {
-      res.status(503);
-      res.send("Unable to stop container");
+      return error
     }
 }
 };
@@ -144,7 +140,7 @@ async function restartcontainer(containerids){
       const image = docker.getContainer(containername);
       await image.restart();
     } catch (error) {
-      console.error(`Error restarting Docker image ${containername}: ${error.message}`);
+      throw error;
     }
 }
 }
@@ -155,7 +151,7 @@ async function removeContainer(containerId) {
       const image = docker.getContainer(containername);
       await image.remove();
     } catch (error) {
-      console.error(`Error removing Docker image ${containername}: ${error.message}`);
+      throw error;
     }
 }
 }
@@ -182,8 +178,7 @@ async function getContainerStats(containerId) {
       timestamp,
     };
   } catch (err) {
-    console.error(`Error getting stats for container ${containerId}: ${err}`);
-    return null;
+    throw err;
   }
 }
 
@@ -229,7 +224,7 @@ async function deleteVolume(volumeNames) {
       try {
         await volume.remove();
       } catch (err) {
-        console.error(`Error deleting volume ${volumeName}: ${err.message}`);
+        throw err;
       }
     }
 }
@@ -267,7 +262,6 @@ async function deleteNetwork(name) {
     const network = docker.getNetwork(name);
     await network.remove();
   } catch (error) {
-    console.error(`Error deleting network ${name}: ${error}`);
     throw error;
   }
 }
