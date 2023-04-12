@@ -4,6 +4,7 @@ const docker = new Docker();
 
 // ---------------------------------------Images--------------------------------------------
 async function createimage(image){
+  try {
     const stream = await docker.pull(image);
     return new Promise((resolve, reject) => {
       docker.modem.followProgress(stream, (err, res) => {
@@ -12,8 +13,12 @@ async function createimage(image){
         }
         return resolve(res);
       });
-
     });
+  } catch (error) {
+    res.status(503);
+    res.send("Unable to create image");
+  }
+    
 }
 
 async function deleteimage(images){
@@ -22,7 +27,8 @@ async function deleteimage(images){
         const image = docker.getImage(imageName);
         await image.remove({ force: true });
       } catch (error) {
-        console.error(`Error deleting Docker image ${imageName}: ${error.message}`);
+        res.status(503);
+        res.send("Unable to stop container");
       }
     }
 }
@@ -40,7 +46,8 @@ async function startcontainer(containerids){
       const image = docker.getContainer(containername);
       await image.start();
     } catch (error) {
-      console.error(`Error starting Docker image ${containername}: ${error.message}`);
+      res.status(503);
+      res.send("Unable to start container");
     }
   }
     return;
@@ -52,7 +59,8 @@ async function stopcontainer(containerids){
       const image = docker.getContainer(containername);
       await image.stop();
     } catch (error) {
-      console.error(`Error stoping Docker image ${containername}: ${error.message}`);
+      res.status(503);
+      res.send("Unable to stop container");
     }
 }
 };
