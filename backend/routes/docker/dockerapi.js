@@ -21,7 +21,6 @@ async function deleteimage(images){
       try {
         const image = docker.getImage(imageName);
         await image.remove({ force: true });
-        console.log(`Deleted Docker image: ${imageName}`);
       } catch (error) {
         console.error(`Error deleting Docker image ${imageName}: ${error.message}`);
       }
@@ -66,7 +65,6 @@ async function listcontainers(){
 async function createContainer(containerName, imageName, networkName, hostvolume,containervolume, hostport,containerport,restartpolicy) {
   let image = await docker.getImage(imageName).inspect().catch(() => null);
   if (!image) {
-    console.log(`Image '${imageName}' not found locally. Pulling from Docker Hub...`);
     const stream = await docker.pull(imageName);
     await new Promise((resolve, reject) => {
       docker.modem.followProgress(stream, (err, res) => {
@@ -88,7 +86,6 @@ async function createContainer(containerName, imageName, networkName, hostvolume
 
   // Create the container
   if(hostvolume && containervolume){
-    console.log("edsf")
     const container = await docker.createContainer({
       Image: imageName,
       name: containerName,
@@ -108,7 +105,6 @@ async function createContainer(containerName, imageName, networkName, hostvolume
       }
     });
     await container.start();
-    console.log(`Container '${containerName}' created and started`);  
     return container;
   }else{
     const container = await docker.createContainer({
@@ -129,7 +125,6 @@ async function createContainer(containerName, imageName, networkName, hostvolume
       }
     });
     await container.start();
-    console.log(`Container '${containerName}' created and started`);  
     return container;
   }
     
@@ -216,7 +211,6 @@ async function createVolume(volumeName) {
     const volume = await docker.createVolume({
     Name: volumeName
     });
-    console.log(`Created volume ${volumeName}`);
     return volume;
 }
 
@@ -226,7 +220,6 @@ async function deleteVolume(volumeNames) {
       const volume = docker.getVolume(volumeName);
       try {
         await volume.remove();
-        console.log(`Volume ${volumeName} deleted.`);
       } catch (err) {
         console.error(`Error deleting volume ${volumeName}: ${err.message}`);
       }
@@ -244,16 +237,13 @@ async function listvolumes(){
 async function createNetwork(networkName, driver="bridge") {
   try {
     const network = await docker.getNetwork(networkName).inspect();
-    console.log(`Network ${networkName} already exists`);
     return network;
   } catch (error) {
-    console.log(`Creating network ${networkName}`);
     const networkOptions = {
       Name: networkName,
       Driver: driver,
     };
     const network = await docker.createNetwork(networkOptions);
-    console.log(`Created network ${networkName}`);
     return network;
   }
 }
@@ -268,7 +258,6 @@ async function deleteNetwork(name) {
   try {
     const network = docker.getNetwork(name);
     await network.remove();
-    console.log(`Network ${name} deleted successfully.`);
   } catch (error) {
     console.error(`Error deleting network ${name}: ${error}`);
     throw error;

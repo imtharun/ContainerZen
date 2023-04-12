@@ -14,13 +14,12 @@ const dockerapi = require("./docker/dockerapi")
 //to pull an image from dockerhub
 router.post("/createimage",async(req,res)=>{
     const image = req.body.image;
-    console.log(image+"create");
     try{
         await dockerapi.createimage(image)
         img = await dockerapi.listimages();
         res.send(img);
     }catch(error){
-        console.log(error);
+        res.status(503);
         res.send(error);
     }
 });
@@ -28,12 +27,12 @@ router.post("/createimage",async(req,res)=>{
 router.post("/deleteimage",async(req,res)=>{
     const image = req.body.image;
     // const image = "ubuntu:latest"
-    console.log(image+"delete");
     try{
         await dockerapi.deleteimage(image)
         img = await dockerapi.listimages();
         res.send(img);
     }catch(error){
+        res.status(503);
         res.send("Unable to fetch container image");
     }
 });
@@ -43,6 +42,7 @@ router.get("/listimages",async(req,res)=>{
         const images = await dockerapi.listimages();
         res.json(images);
     }catch(error){
+        res.status(503);
         res.send("Unable to fetch container image");
     }
 });
@@ -55,7 +55,6 @@ router.get("/listcontainers", async (req, res) => {
       const containers = await dockerapi.listcontainers();
       res.json(containers);
     } catch (err) {
-      console.error(err);
       res.sendStatus(500);
     }
 });
@@ -63,7 +62,6 @@ router.get("/listcontainers", async (req, res) => {
 //to start a docker container using container name
 router.post("/startcontainer",async(req,res)=>{
     const containerid = req.body.containerId;
-    console.log(containerid+"start request");
     try{
         await dockerapi.startcontainer(containerid);
         cnt = await dockerapi.listcontainers();
@@ -74,6 +72,7 @@ router.post("/startcontainer",async(req,res)=>{
         res.send("container not found");
         }
         else{
+            res.status(503);
             res.send("Unknown error");
         }
     }
@@ -98,7 +97,7 @@ router.post("/createcontainer",async(req,res)=>{
         cnt = await dockerapi.listcontainers();
         res.send(cnt);
     }catch(error){
-        console.log(error);
+        res.status(503);
         res.send(error);
     }
 })
@@ -106,7 +105,6 @@ router.post("/createcontainer",async(req,res)=>{
 //to restart a docker container
 router.post("/restartcontainer",async(req,res)=>{
     const containerid = req.body.containerId;
-    console.log(containerid+"restart");
     try{
         await dockerapi.restartcontainer(containerid);
         cnt = await dockerapi.listcontainers();
@@ -117,6 +115,7 @@ router.post("/restartcontainer",async(req,res)=>{
         res.send("container not found");
         }
         else{
+            res.status(503);
             res.send("Unknown error");
         }
     }
@@ -124,8 +123,6 @@ router.post("/restartcontainer",async(req,res)=>{
 
 router.post("/stopcontainer",async(req,res)=>{
     const containerid = req.body.containerId;
-    console.log(containerid+"stop");
-
     try{
         await dockerapi.stopcontainer(containerid);
         cnt = await dockerapi.listcontainers();
@@ -136,7 +133,8 @@ router.post("/stopcontainer",async(req,res)=>{
         res.send("container not found");
         }
         else{
-            res.send(error);
+            res.status(503);
+            res.send("Unable to stop container");
         }
     }
     
@@ -144,8 +142,6 @@ router.post("/stopcontainer",async(req,res)=>{
 
 router.post("/deletecontainer",async(req,res)=>{
     const containerid =req.body.containerId;
-    console.log(containerid+"delete");
-
     try{
         await dockerapi.removeContainer(containerid);
         cnt = await dockerapi.listcontainers();
@@ -156,6 +152,7 @@ router.post("/deletecontainer",async(req,res)=>{
         res.send("container not found");
         }
         else{
+            res.status(503);
             res.send(error);
         }
     }
@@ -168,7 +165,7 @@ router.get("/currStats",async(req,res)=>{
         res.json(stats);
     }
     catch(error){
-        console.log(error);
+        res.status(503);
         res.send("Unable to fetch container stats");
     }
 });
@@ -177,26 +174,26 @@ router.get("/currStats",async(req,res)=>{
 //---------------------------------------Volumes--------------------------------------------
 router.post("/createvolume",async(req,res)=>{
     const volumeName = req.body.volumeName;
-    console.log(volumeName+"create");
     try{
         await dockerapi.createVolume(volumeName);
         vol = await dockerapi.listvolumes();
         res.send(vol);
     }
     catch(error){
+        res.status(503);
         res.send("Unable to create volume");
     }
 });
 
 router.post("/deletevolume",async(req,res)=>{
     const volumeName = req.body.volumeName;
-    console.log(volumeName+"delete");
     try{
         await dockerapi.deleteVolume(volumeName);
         vol = await dockerapi.listvolumes();
         res.send(vol);
     }
     catch(error){
+        res.status(503);
         res.send("Unable to delete volume");
     }
 });
@@ -207,6 +204,7 @@ router.get("/listvolumes",async(req,res)=>{
         res.json(volumes);
     }
     catch(error){
+        res.status(503);
         res.send("Unable to list volumes");
     }
 });
@@ -222,6 +220,7 @@ router.post("/createnetwork",async(req,res)=>{
         res.sendFile(ntw);
     }
     catch(error){
+        res.status(503);
         res.send("Unable to create network");
     }
 });
@@ -234,6 +233,7 @@ router.post("/deletenetwork",async(req,res)=>{
         res.sendFile(ntw);
     }
     catch(error){
+        res.status(503);
         res.send("Unable to delete network");
     }
 });
@@ -244,7 +244,7 @@ router.get("/listnetworks",async(req,res)=>{
         res.json(networks);
     }
     catch(error){
-        console.log(error);
+        res.status(503);
         res.send(error);
     }
 });

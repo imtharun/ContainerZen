@@ -34,7 +34,7 @@ app.use((req,res,next)=>{
 });
   
 app.listen(port, () => {
-    console.log("Server Started to listen...");
+    console.log("Server Started to listen on port 3000...");
 });
 
 async function validateCookiesfunc (req, res, next) {

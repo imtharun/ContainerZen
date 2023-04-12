@@ -7,7 +7,6 @@ const dmserver = new WebSocket.Server({ port: dmport });
 
 function startserver(){  
   dmserver.on('connection', (socket) => {
-    console.log('WebSocket connection established');
     setInterval(() => {
       const containers = [];
       const map = new Map();
@@ -16,7 +15,6 @@ function startserver(){
           console.error(`Failed to list containers: ${err.message}`);
           return;
         }
-        console.log(`Found ${containerList.length} running containers`);
         containerList.forEach(containerInfo => {
           const container = docker.getContainer(containerInfo.Id);
           containers.push(container);
@@ -25,7 +23,6 @@ function startserver(){
               console.error(`Failed to stream container stats: ${err.message}`);
               return;
             }
-            console.log(`Streaming stats for container ${container.id}`);
             stream.on('data', chunk => {
               const data = JSON.parse(chunk.toString('utf8'));
               const cpuDelta = data.cpu_stats.cpu_usage.total_usage - data.precpu_stats.cpu_usage.total_usage;
@@ -39,7 +36,6 @@ function startserver(){
               };
               map.set(container.id, usageData);
               const jsonString = JSON.stringify(Array.from(map.entries()));
-              // console.log(jsonString);
               socket.send(jsonString);
             });
             stream.on('error', err => {
