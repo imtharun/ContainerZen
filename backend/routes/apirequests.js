@@ -13,7 +13,7 @@ const dockerapi = require("./docker/dockerapi")
 //---------------------------------------Images--------------------------------------------
 //to pull an image from dockerhub
 router.post("/createimage",async(req,res)=>{
-    const image = req.body.image;
+    const image = req.body.obj;
     try{
         await dockerapi.createimage(image)
         img = await dockerapi.listimages();
@@ -55,7 +55,7 @@ router.get("/listcontainers", async (req, res) => {
       const containers = await dockerapi.listcontainers();
       res.json(containers);
     } catch (err) {
-      res.sendStatus(500);
+      res.sendStatus(503);
     }
 });
 
@@ -173,7 +173,7 @@ router.get("/currStats",async(req,res)=>{
 
 //---------------------------------------Volumes--------------------------------------------
 router.post("/createvolume",async(req,res)=>{
-    const volumeName = req.body.volumeName;
+    const volumeName = req.body.obj;
     try{
         await dockerapi.createVolume(volumeName);
         vol = await dockerapi.listvolumes();
