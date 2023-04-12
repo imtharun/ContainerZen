@@ -91,8 +91,8 @@ const Template = ({ index, row, isChecked, forWhat, isCheckedHandler }) => {
             name={row.col1}
             id={index}
             value={row.col1}
-            checked={isChecked.has(row.col1)}
-            onChange={() => isCheckedHandler(row.col1)}
+            checked={isChecked.has(row.col2)}
+            onChange={() => isCheckedHandler(row.col2)}
           />
         </td>
       )}

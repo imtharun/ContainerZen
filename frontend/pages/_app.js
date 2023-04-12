@@ -3,8 +3,14 @@ import Layout from "@/sections/Layout";
 
 export default function App({ Component, pageProps }) {
   return (
-    <Layout heading={pageProps.heading}>
-      <Component {...pageProps} />
-    </Layout>
+    <>
+      {pageProps.noLayout ? (
+        <Component {...pageProps} />
+      ) : (
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      )}
+    </>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import Head from "next/head";
 import ContainerForImageAndVolume from "@/components/ContainerForImageAndVolume";
 import axios from "axios";
@@ -7,45 +8,54 @@ const Images = ({ data: initialData }) => {
   const type = "image";
   const [data, setData] = useState(initialData);
   const [isChecked, setIsChecked] = useState(new Set());
+  const { push } = useRouter();
 
   const deleteObj = async () => {
-    const data = await axios.post(`http://localhost:5000/api/delete${type}`, {
-      image: Array.from(isChecked),
-    });
+    try {
+      const data = await axios.post(`http://localhost:5000/api/delete${type}`, {
+        image: Array.from(isChecked),
+      });
 
-    if (data.status === 200) {
-      const initialData = [];
-      for (var ele of data.data) {
-        const obj = {
-          col1: ele.RepoTags[0],
-          col2: ele.Id,
-          col3: ele.Created,
-        };
+      if (data.status === 200) {
+        const initialData = [];
+        for (var ele of data.data) {
+          const obj = {
+            col1: ele.RepoTags[0],
+            col2: ele.Id,
+            col3: ele.Created,
+          };
 
-        initialData.push(obj);
+          initialData.push(obj);
+        }
+
+        setData(initialData);
+        setIsChecked(new Set());
       }
-
-      setData(initialData);
-      setIsChecked(new Set());
+    } catch (error) {
+      push("/503");
     }
   };
 
   const refreshHandler = async () => {
-    const data = await axios.get(`http://localhost:5000/api/list${type}s`);
+    try {
+      const data = await axios.get(`http://localhost:5000/api/list${type}s`);
 
-    if (data.status === 200) {
-      const initialData = [];
-      for (var ele of data.data) {
-        const obj = {
-          col1: ele.RepoTags[0],
-          col2: ele.Id,
-          col3: ele.Created,
-        };
+      if (data.status === 200) {
+        const initialData = [];
+        for (var ele of data.data) {
+          const obj = {
+            col1: ele.RepoTags[0],
+            col2: ele.Id,
+            col3: ele.Created,
+          };
 
-        initialData.push(obj);
+          initialData.push(obj);
+        }
+
+        setData(initialData);
       }
-
-      setData(initialData);
+    } catch (error) {
+      push("/503");
     }
   };
 
@@ -90,24 +100,33 @@ const Images = ({ data: initialData }) => {
 };
 
 export const getServerSideProps = async (ctx) => {
-  const data = await axios.get("http://localhost:5000/api/listimages");
+  try {
+    const data = await axios.get("http://localhost:5000/api/listimages");
 
-  const initialData = [];
-  if (data.status === 200) {
-    for (var ele of data.data) {
-      const obj = {
-        col1: ele.RepoTags[0],
-        col2: ele.Id,
-        col3: ele.Created,
-      };
+    const initialData = [];
+    if (data.status === 200) {
+      for (var ele of data.data) {
+        const obj = {
+          col1: ele.RepoTags[0],
+          col2: ele.Id,
+          col3: ele.Created,
+        };
 
-      initialData.push(obj);
+        initialData.push(obj);
+      }
     }
-  }
 
-  return {
-    props: { heading: "Images", data: initialData },
-  };
+    return {
+      props: { data: initialData },
+    };
+  } catch (error) {
+    return {
+      redirect: {
+        destination: "/503",
+        statusCode: 307,
+      },
+    };
+  }
 };
 
 export default Images;

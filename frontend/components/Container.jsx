@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   AiOutlinePlusCircle as PlusIcon,
@@ -9,44 +10,68 @@ import axios from "axios";
 import Search from "./Search";
 import T from "./T";
 
-const Table = ({ headers, rows, setData }) => {
+const Table = ({ headers, rows }) => {
+  const [data, setData] = useState(rows);
+
   const [isChecked, setIsChecked] = useState(new Set());
   const searchRef = useRef();
   const [search, setSearch] = useState("");
+  const { push } = useRouter();
 
   const refreshHandler = async () => {
-    const data = await axios.get("http://localhost:5000/api/listcontainers");
+    try {
+      const data = await axios.get("http://localhost:5000/api/listcontainers");
 
-    if (data.status === 200) {
-      const initialData = [];
-      for (var ele of data.data) {
-        const obj = {
-          col1: ele.Names[0],
-          col2: ele.Id,
-          col3: ele.State,
-          col4: ele.Image,
-          col5: ele.Ports.length === 0 ? "-" : ele.Ports[0].PrivatePort,
-          col6: ele.Created,
-        };
+      if (data.status === 200) {
+        const initialData = [];
+        for (var ele of data.data) {
+          const obj = {
+            col1: ele.Names[0],
+            col2: ele.Id,
+            col3: ele.State,
+            col4: ele.Image,
+            col5: ele.Ports.length === 0 ? "-" : ele.Ports[0].PrivatePort,
+            col6: ele.Created,
+          };
 
-        initialData.push(obj);
+          initialData.push(obj);
+        }
         setIsChecked(new Set());
         setData(initialData);
       }
+    } catch (error) {
+      push("/503");
     }
   };
 
   const post = async (type) => {
-    const data = await axios.post(
-      `http://localhost:5000/api/${type}container`,
-      {
-        containerId: Arrays.from(isChecked),
-      }
-    );
+    try {
+      const data = await axios.post(
+        `http://localhost:5000/api/${type}container`,
+        {
+          containerId: Array.from(isChecked),
+        }
+      );
 
-    if (data.status === 200) {
-      setData(data.data);
-      setIsChecked(new Set());
+      if (data.status === 200) {
+        const initialData = [];
+        for (var ele of data.data) {
+          const obj = {
+            col1: ele.Names[0],
+            col2: ele.Id,
+            col3: ele.State,
+            col4: ele.Image,
+            col5: ele.Ports.length === 0 ? "-" : ele.Ports[0].PrivatePort,
+            col6: ele.Created,
+          };
+
+          initialData.push(obj);
+        }
+        setIsChecked(new Set());
+        setData(initialData);
+      }
+    } catch (error) {
+      push("/503");
     }
   };
 
@@ -135,7 +160,7 @@ const Table = ({ headers, rows, setData }) => {
           forWhat="container"
           headers={headers}
           search={search}
-          rows={rows}
+          rows={data}
           isChecked={isChecked}
           isCheckedHandler={isCheckedHandler}
           filter="col1"

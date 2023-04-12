@@ -1,51 +1,61 @@
 import React, { useState } from "react";
 import Head from "next/head";
 import ContainerForImageAndVolume from "@/components/ContainerForImageAndVolume";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 
 const Volumes = ({ initialData }) => {
   const type = "volume";
   const [isChecked, setIsChecked] = useState(new Set());
   const [data, setData] = useState(initialData);
+  const { push } = useRouter();
 
   const refreshHandler = async () => {
-    const data = await axios.get(`http://localhost:5000/api/list${type}s`);
+    try {
+      const data = await axios.get(`http://localhost:5000/api/list${type}s`);
 
-    if (data.status === 200) {
-      const initialData = [];
-      for (var ele of data.data.Volumes) {
-        const obj = {
-          col1: ele.Name,
-          col2: ele.Mountpoint,
-          col3: ele.Driver,
-          col4: ele.CreatedAt,
-        };
+      if (data.status === 200) {
+        const initialData = [];
+        for (var ele of data.data.Volumes) {
+          const obj = {
+            col1: ele.Mountpoint,
+            col2: ele.Name,
+            col3: ele.Driver,
+            col4: ele.CreatedAt,
+          };
 
-        initialData.push(obj);
+          initialData.push(obj);
+        }
+        setData(initialData);
       }
-      setData(initialData);
+    } catch (error) {
+      push("/503");
     }
   };
 
   const deleteObj = async () => {
-    const data = await axios.post(`http://localhost:5000/api/delete${type}`, {
-      volumeName: Array.from(isChecked),
-    });
+    try {
+      const data = await axios.post(`http://localhost:5000/api/delete${type}`, {
+        volumeName: Array.from(isChecked),
+      });
 
-    if (data.status === 200) {
-      const initialData = [];
-      for (var ele of data.data.Volumes) {
-        const obj = {
-          col1: ele.Name,
-          col2: ele.Mountpoint,
-          col3: ele.Driver,
-          col4: ele.CreatedAt,
-        };
+      if (data.status === 200) {
+        const initialData = [];
+        for (var ele of data.data.Volumes) {
+          const obj = {
+            col2: ele.Name,
+            col1: ele.Mountpoint,
+            col3: ele.Driver,
+            col4: ele.CreatedAt,
+          };
 
-        initialData.push(obj);
+          initialData.push(obj);
+        }
+        setIsChecked(new Set());
+        setData(initialData);
       }
-      setIsChecked(new Set());
-      setData(initialData);
+    } catch (error) {
+      push("/503");
     }
   };
 
@@ -76,7 +86,7 @@ const Volumes = ({ initialData }) => {
       <main>
         <ContainerForImageAndVolume
           type={type}
-          headers={["Select", "Name", "Mount point", "Driver", "Created"]}
+          headers={["Select", "Mount point", "Name", "Driver", "Created"]}
           rows={data}
           setData={setData}
           deleteObj={deleteObj}
@@ -90,25 +100,34 @@ const Volumes = ({ initialData }) => {
 };
 
 export const getServerSideProps = async (ctx) => {
-  const data = await axios.get("http://localhost:5000/api/listvolumes");
+  try {
+    const data = await axios.get("http://localhost:5000/api/listvolumes");
 
-  const initialData = [];
-  if (data.status === 200) {
-    for (var ele of data.data.Volumes) {
-      const obj = {
-        col1: ele.Name,
-        col2: ele.Mountpoint,
-        col3: ele.Driver,
-        col4: ele.CreatedAt,
+    const initialData = [];
+    if (data.status === 200) {
+      for (var ele of data.data.Volumes) {
+        const obj = {
+          col1: ele.Name,
+          col2: ele.Mountpoint,
+          col3: ele.Driver,
+          col4: ele.CreatedAt,
+        };
+
+        initialData.push(obj);
+      }
+
+      return {
+        props: { initialData },
       };
-
-      initialData.push(obj);
     }
+  } catch (error) {
+    return {
+      redirect: {
+        destination: "/503",
+        statusCode: 307,
+      },
+    };
   }
-
-  return {
-    props: { heading: "Volumes", initialData },
-  };
 };
 
 export default Volumes;

@@ -3,7 +3,6 @@ import axios from "axios";
 import Dashboard from "@/components/Dashboard";
 
 const Home = ({ data }) => {
-  console.log(data);
   return (
     <>
       <Head>
@@ -36,14 +35,21 @@ const Home = ({ data }) => {
 };
 
 export const getServerSideProps = async (ctx) => {
-  const data = await axios.get("http://localhost:5000/api/currStats");
-
-  if (data.status === 200) {
+  try {
+    const res = await axios.get("http://localhost:5000/api/currStats");
+    if (res.status === 200) {
+      return {
+        props: { heading: "Home", data: res.data },
+      };
+    }
+  } catch (error) {
+    return {
+      redirect: {
+        destination: "/503",
+        statusCode: 307,
+      },
+    };
   }
-
-  return {
-    props: { heading: "Home", data: data.data },
-  };
 };
 
 export default Home;

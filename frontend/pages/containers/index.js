@@ -4,7 +4,6 @@ import axios from "axios";
 import Container from "@/components/Container";
 
 const Application = ({ initialData }) => {
-  const [data, setData] = useState(initialData);
   return (
     <>
       <Head>
@@ -40,8 +39,7 @@ const Application = ({ initialData }) => {
             "Ports",
             "Created At",
           ]}
-          rows={data}
-          setData={setData}
+          rows={initialData}
         />
       </main>
     </>
@@ -49,27 +47,36 @@ const Application = ({ initialData }) => {
 };
 
 export const getServerSideProps = async (ctx) => {
-  const data = await axios.get("http://localhost:5000/api/listcontainers");
+  try {
+    const data = await axios.get("http://localhost:5000/api/listcontainers");
 
-  const initialData = [];
-  if (data.status === 200) {
-    for (var ele of data.data) {
-      const obj = {
-        col1: ele.Names[0],
-        col2: ele.Id,
-        col3: ele.State,
-        col4: ele.Image,
-        col5: ele.Ports.length === 0 ? "-" : ele.Ports[0].PrivatePort,
-        col6: ele.Created,
-      };
+    const initialData = [];
+    if (data.status === 200) {
+      for (var ele of data.data) {
+        const obj = {
+          col1: ele.Names[0],
+          col2: ele.Id,
+          col3: ele.State,
+          col4: ele.Image,
+          col5: ele.Ports.length === 0 ? "-" : ele.Ports[0].PrivatePort,
+          col6: ele.Created,
+        };
 
-      initialData.push(obj);
+        initialData.push(obj);
+      }
     }
-  }
 
-  return {
-    props: { heading: "Containers ", initialData },
-  };
+    return {
+      props: { initialData },
+    };
+  } catch (error) {
+    return {
+      redirect: {
+        destination: "/503",
+        statusCode: 307,
+      },
+    };
+  }
 };
 
 export default Application;

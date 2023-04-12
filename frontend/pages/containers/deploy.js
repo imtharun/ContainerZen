@@ -1,10 +1,8 @@
 import { useState } from "react";
 import Head from "next/head";
-
 import Stepper from "@/components/Stepper";
 import StepperControl from "@/components/StepperControl";
 import { UseContextProvider } from "@/contexts/StepperContext";
-
 import General from "@/components/steps/General";
 import Networking from "@/components/steps/Networking";
 import Volumes from "@/components/steps/Volumes";
@@ -77,12 +75,6 @@ const Application = () => {
       </main>
     </>
   );
-};
-
-export const getServerSideProps = async (ctx) => {
-  return {
-    props: { heading: "Containers / Deploy" },
-  };
 };
 
 export default Application;

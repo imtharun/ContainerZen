@@ -2,19 +2,14 @@ import Image from "next/image";
 import containerImage from "@/assets/container.png";
 import { BsPerson as PersonIcon } from "react-icons/bs";
 
-const Header = ({ heading, user }) => {
+const Header = () => {
   return (
     <header className="h-[10vh] z-30 bg-mid-dark p-4 text-light flex items-center justify-between shadow-2xl">
       <div className="flex items-center justify-center">
         <Icon />
-        <h1 className="pl-3 text-xl hidden sm:block font-medium">ContainerZen</h1>
-      </div>
-      <h1 className="text-xl ">{heading}</h1>
-      <div className="flex items-center">
-        <PersonIcon className="w-6 h-6" />
-        <p className="ml-2 text-lg hidden sm:block border-b-[2px] border-transparent hover:border-b-[2px] hover:border-b-light transition-all duration-300">
-          {user}
-        </p>
+        <h1 className="pl-3 text-xl hidden sm:block font-medium">
+          ContainerZen
+        </h1>
       </div>
     </header>
   );

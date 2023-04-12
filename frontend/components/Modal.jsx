@@ -1,16 +1,22 @@
 import React, { useState, useRef } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const Modal = ({ type, showModal, setShowModal }) => {
   const ref = useRef();
   const [obj, setObj] = useState("");
+  const { push } = useRouter();
 
   const pull = async () => {
-    const data = await axios.post(`http://localhost:5000/api/create${type}`, {
-      obj,
-    });
-    if (data.status === 200) {
-      setObj("");
+    try {
+      const data = await axios.post(`http://localhost:5000/api/create${type}`, {
+        obj,
+      });
+      if (data.status === 200) {
+        setObj("");
+      }
+    } catch (error) {
+      push("/503");
     }
   };
 
