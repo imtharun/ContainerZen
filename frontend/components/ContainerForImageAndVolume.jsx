@@ -63,7 +63,7 @@ const TableTemp = ({
           searchRef={searchRef}
         />
       </div>
-      <div className="bg-mid-dark rounded-b-md p-4 overflow-y-scroll no-scrollbar">
+      <div className="bg-mid-dark rounded-b-md p-4 overflow-y-scroll no-scrollbar text-center sm:text-left">
         <button
           className="inline-block rounded bg-light text-dark py-1 px-4 text-lg font-medium hover:opacity-50 disabled:opacity-50"
           onClick={deleteHandler}

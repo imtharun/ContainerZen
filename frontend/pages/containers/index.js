@@ -1,5 +1,4 @@
 import Head from "next/head";
-import { useState } from "react";
 import axios from "axios";
 import Container from "@/components/Container";
 
@@ -70,12 +69,15 @@ export const getServerSideProps = async (ctx) => {
       props: { initialData },
     };
   } catch (error) {
-    return {
-      redirect: {
-        destination: "/503",
-        statusCode: 307,
-      },
-    };
+    const { status: statusCode } = error.response;
+    if (+statusCode === 503) {
+      return {
+        redirect: {
+          destination: "/503",
+          statusCode: 307,
+        },
+      };
+    }
   }
 };
 

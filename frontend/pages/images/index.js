@@ -32,7 +32,10 @@ const Images = ({ data: initialData }) => {
         setIsChecked(new Set());
       }
     } catch (error) {
-      push("/503");
+      const { status: statusCode } = error.response;
+      if (+statusCode === 503) {
+        push("/503");
+      }
     }
   };
 

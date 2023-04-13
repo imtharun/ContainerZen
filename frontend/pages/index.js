@@ -43,12 +43,16 @@ export const getServerSideProps = async (ctx) => {
       };
     }
   } catch (error) {
-    return {
-      redirect: {
-        destination: "/503",
-        statusCode: 307,
-      },
-    };
+    const { status: statusCode } = error.response;
+
+    if (+statusCode === 503) {
+      return {
+        redirect: {
+          destination: "/503",
+          statusCode: 307,
+        },
+      };
+    }
   }
 };
 

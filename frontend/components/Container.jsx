@@ -40,7 +40,10 @@ const Table = ({ headers, rows }) => {
         setData(initialData);
       }
     } catch (error) {
-      push("/503");
+      const { status: statusCode } = error.response;
+      if (+statusCode === 503) {
+        push("/503");
+      }
     }
   };
 
@@ -71,7 +74,11 @@ const Table = ({ headers, rows }) => {
         setData(initialData);
       }
     } catch (error) {
-      push("/503");
+      const { status: statusCode } = error.response;
+      console.log(statusCode);
+      if (+statusCode === 503) {
+        push("/503");
+      }
     }
   };
 
@@ -102,7 +109,7 @@ const Table = ({ headers, rows }) => {
   };
 
   return (
-    <div className="h-[90vh] bg-dark text-light p-2 sm:ml-[3rem] sm:px-[5rem] pt-8 pb-4 overflow-y-scroll no-scrollbar">
+    <div className="h-[90vh] bg-dark text-light p-2 sm:ml-[3rem] sm:px-[5rem] pt-4 pb-24 sm:pt-8 sm:pb-4 overflow-y-scroll no-scrollbar">
       <div className="bg-light flex justify-between text-dark p-3 rounded-t-md flex-col sm:flex-row items-center">
         <div className="flex items-center">
           <h1 className="font-medium text-base text-center">Containers </h1>
@@ -122,9 +129,9 @@ const Table = ({ headers, rows }) => {
           searchRef={searchRef}
         />
       </div>
-      <div className="bg-mid-dark rounded-b-md p-4 overflow-y-scroll no-scrollbar">
+      <div className="bg-mid-dark rounded-b-md p-4 overflow-y-scroll no-scrollbar text-center sm:text-left">
         <button
-          className="inline-block rounded bg-light text-dark py-1 px-4 text-lg font-medium hover:opacity-50 disabled:opacity-50 mx-1"
+          className="inline-block rounded bg-light text-dark py-1 px-4 text-lg font-medium hover:opacity-50 disabled:opacity-50 mx-1 my-1"
           onClick={startHandler}
           title="Start"
           disabled={isChecked.size === 0}
@@ -132,7 +139,7 @@ const Table = ({ headers, rows }) => {
           Start
         </button>
         <button
-          className="inline-block rounded bg-light text-dark py-1 px-4 text-lg font-medium hover:opacity-50 disabled:opacity-50 mx-1"
+          className="inline-block rounded bg-light text-dark py-1 px-4 text-lg font-medium hover:opacity-50 disabled:opacity-50 mx-1 my-1"
           onClick={stopHandler}
           title="Stop"
           disabled={isChecked.size === 0}
@@ -140,7 +147,7 @@ const Table = ({ headers, rows }) => {
           Stop
         </button>
         <button
-          className="inline-block rounded bg-light text-dark py-1 px-4 text-lg font-medium hover:opacity-50 disabled:opacity-50 mx-1"
+          className="inline-block rounded bg-light text-dark py-1 px-4 text-lg font-medium hover:opacity-50 disabled:opacity-50 mx-1 my-1"
           onClick={restartHandler}
           title="Restart"
           disabled={isChecked.size === 0}

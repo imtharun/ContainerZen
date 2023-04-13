@@ -28,7 +28,7 @@ const Custom404 = () => {
         />
       </Head>
       <main className="h-screen flex flex-col justify-center items-center bg-dark">
-        <p className="text-light bottom-20 text-xl font-mono font-semibold left-1/2">
+        <p className="text-light text-center bottom-20 text-xl font-mono font-semibold left-1/2">
           Error 404
         </p>
         <button className="inline-block rounded bg-light text-dark py-2 px-4 text-lg font-medium hover:opacity-50 disabled:opacity-50 mx-1 my-2 transition-all duration-300">
