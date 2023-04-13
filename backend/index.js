@@ -4,8 +4,10 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const apidocker = require("./routes/apirequests");
 const usageserver = require("./routes/docker/usageserver");
+const dotenv = require('dotenv');
+dotenv.config({ path: './.env' });
 
-const port = 5000;
+const port = process.env.port;
 const app = express();
 
 usageserver.startserver();
@@ -13,15 +15,13 @@ usageserver.startserver();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors({
-  origin:["http://localhost:3000"], 
+  origin:process.env.origin, 
   credentials:true,
   optionsSuccessStatus: 200}));
 app.use(express.json());
 app.use(cookieParser());
 
-const allowedOrigins = ['http://localhost:3000', 
-'http://localhost:3000/api', 
-];
+const allowedOrigins = process.env.allowedOrigins;
 
 app.use((req,res,next)=>{
     const origin = req.headers.origin;
